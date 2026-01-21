@@ -16,6 +16,8 @@ Route::get('/tickets/{id}', [TicketController::class, 'show']);
 
 //error report routes
 Route::get('/error-reports', [ErrorController::class, 'index']);
+Route::get('/error-reports/{id}', [ErrorController::class, 'show']);
 
 //feature request routes
 Route::get('/feature-requests', [FeatureController::class, 'index']);
+Route::get('/feature-requests/{id}', [FeatureController::class, 'show']);
