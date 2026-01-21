@@ -1,0 +1,46 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\ErrorReport;
+use Error;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Faker\Factory as FakerFactory;
+
+class ErrorSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $faker = FakerFactory::create('id_ID');
+        for ($i=0; $i < 10; $i++) {
+            ErrorReport::create([
+                'title' => $faker->sentence,
+                'description' => $faker->paragraph,
+                'category' => $faker->randomElement(['syntax_error', 'runtime_error', 'logical_error']),
+                'priority' => $faker->randomElement(['low', 'medium', 'high']),
+                'status' => $faker->randomElement(['open', 'in_progress', 'resolved']),
+                'reporter_id' => $faker->numberBetween(1, 10),
+                'assigned_to_id' => $faker->numberBetween(1, 10),
+                'assigned_team' => $faker->randomElement(['development', 'qa', 'support']),
+                'date_reported' => $faker->dateTimeBetween('-1 month', 'now'),
+                'start_date' => $faker->dateTimeBetween('-15 days', 'now'),
+                'due_date' => $faker->dateTimeBetween('now', '+1 month'),
+                'completion_date' => $faker->dateTimeBetween('now', '+2 months'),
+                'estimated_effort' => $faker->numberBetween(1, 100),
+                'actual_effort' => $faker->numberBetween(1, 100),
+                'sla_time_elapsed' => $faker->numberBetween(1, 100),
+                'sla_time_remaining' => $faker->numberBetween(1, 100),
+                'sla_breached' => $faker->boolean,
+                'source_ticket_id' => $faker->numberBetween(1, 10),
+                'is_direct_input' => $faker->boolean,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        }
+    }
+}
