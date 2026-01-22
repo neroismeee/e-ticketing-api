@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
-use Illuminate\Http\Request;
+use App\Http\Requests\TicketRequest;
+use App\Http\Requests\UpdateTicketRequest;
 
 class TicketController extends Controller
 {
@@ -14,7 +15,7 @@ class TicketController extends Controller
 
     public function index()
     {
-        $data = Ticket::orderBy('created_at', 'desc')->get();
+        $data = Ticket::latest()->get();
         return response()->json([
             'status' => true,
             'message' => 'List of Tickets',
@@ -25,9 +26,17 @@ class TicketController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TicketRequest $request)
     {
-        
+        $data = $request->validated();
+
+        $ticket = Ticket::create($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Ticket Created Successfully',
+            'data' => $ticket
+        ], 201);
     }
 
     /**
@@ -35,27 +44,22 @@ class TicketController extends Controller
      */
     public function show(string $id)
     {
-        $data = Ticket::find($id);
-        if ($data) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Ticket Details',
-                'data' => $data
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Ticket Not Found',
-            ], 404);
-        }
+        $data = Ticket::findOrFail($id);
+        return response()->json($data, 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateTicketRequest  $request, string $id)
     {
-        //
+        $data = Ticket::findOrFail($id);
+        $data->update($request->all());
+        return response()->json([
+            'status' => true,
+            'message' => 'Ticket Updated Successfully',
+            'data' => $data
+        ], 200);
     }
 
     /**
@@ -63,6 +67,11 @@ class TicketController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $data = Ticket::findOrFail($id);
+        $data->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Ticket Deleted Successfully',
+        ], 200);
     }
 }
