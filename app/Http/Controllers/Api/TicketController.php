@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Http\Requests\TicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
+use App\Http\Resources\TicketResource;
 
 class TicketController extends Controller
 {
@@ -15,7 +16,7 @@ class TicketController extends Controller
 
     public function index()
     {
-        $data = Ticket::latest()->get();
+        $data = TicketResource::collection(Ticket::latest()->get());
         return response()->json([
             'status' => true,
             'message' => 'List of Tickets',
