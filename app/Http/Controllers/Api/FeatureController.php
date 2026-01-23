@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FeatureRequest as RequestsFeatureRequest;
+use App\Http\Resources\FeatureResource;
 use App\Models\FeatureRequest;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class FeatureController extends Controller
      */
     public function index()
     {
-        $data = FeatureRequest::orderBy('created_at', 'desc')->get();
+        $data = FeatureResource::collection(FeatureRequest::orderBy('created_at', 'desc')->get());
         return response()->json([
             'status' => true,
             'message' => 'List of Feature Requests',
