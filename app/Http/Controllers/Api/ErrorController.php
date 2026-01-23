@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ErrorReport;
 use Illuminate\Http\Request;
 use App\Http\Requests\ErrorRequest;
+use App\Http\Resources\ErrorResource;
+
 class ErrorController extends Controller
 {
     /**
@@ -13,7 +15,7 @@ class ErrorController extends Controller
      */
     public function index()
     {
-        $data = ErrorReport::latest()->get();
+        $data = ErrorResource::collection(ErrorReport::latest()->get());
         return response()->json([
             'status' => true,
             'message' => 'List of Error Reports',
