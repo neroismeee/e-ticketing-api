@@ -40,4 +40,36 @@ class FeatureRequest extends Model
         'created_at',
         'updated_at',
     ];
+
+    public const REQUEST_TYPES = [
+        'feature_request',
+        'bug_fix',
+    ];
+
+    public const PRIORITIES = [
+        'low',
+        'medium',
+        'high',
+        'critical',
+    ];
+
+    public const STATUSES = [
+        'submission',
+        'pending_approval',
+        'approved',
+        'assigned',
+        'development',
+        'testing',
+        'validation',
+        'completed',
+        'post_implementation_review',
+        'rejected',
+        'cancelled',
+    ];
+
+    public const TEAMS = [
+        'programmer',
+        'network',
+        'hardware',
+    ];
 }
