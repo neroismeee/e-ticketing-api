@@ -50,7 +50,7 @@ class FeatureController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(RequestsFeatureRequest $request, string $id)
     {
         $data = FeatureRequest::findOrFail($id);
         $data->update($request->all());
