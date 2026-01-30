@@ -52,7 +52,7 @@ class TicketController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTicketRequest  $request, string $id)
+    public function update(TicketRequest  $request, string $id)
     {
         $data = Ticket::findOrFail($id);
         $data->update($request->all());
