@@ -76,25 +76,26 @@ class Ticket extends Model
         'feature_request',
     ];
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
+    // Relations
+    public function reporter()
+    {
+        return $this->belongsTo(User::class, 'reporter_id');
+    }
 
-    //     static::creating(function ($model) {
-    //         $year = Carbon::now()->year;
+    public function assignee()
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
 
-    //         $last = self::whereYear('created_at', $year)
-    //             ->orderBy('id', 'desc')
-    //             ->first();
-                
-    //         $number = 1;
-    //         if ($last) {
-    //             $number = (int) substr($last->id, -4) + 1;
-    //         }
+    public function convertedBy()
+    {
+        return $this->belongsTo(User::class, 'converted_by');
+    }
 
-    //         $model->id = 'TKT-' . $year . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
-    //     });
-    // }
+    public function parentTicket()
+    {
+        return $this->belongsTo(Ticket::class, 'parent_ticket_id');
+    }
 
     
 

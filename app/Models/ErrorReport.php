@@ -55,4 +55,20 @@ class ErrorReport extends Model
         'network',
         'hardware',
     ];
+
+    // Relations
+    public function reporter()
+    {
+        return $this->belongsTo(User::class, 'reporter_id');
+    }
+    
+    public function assignee()
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
+
+    public function sourceTicket()
+    {
+        return $this->belongsTo(Ticket::class, 'source_ticket_id');
+    }
 }

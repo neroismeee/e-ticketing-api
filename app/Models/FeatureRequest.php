@@ -25,7 +25,7 @@ class FeatureRequest extends Model
         'due_date',
         'completion_date',
         'review_date',
-        'esimated_effort',
+        'estimated_effort',
         'actual_effort',
         'sla_time_elapsed',
         'sla_time_remaining',
@@ -72,4 +72,25 @@ class FeatureRequest extends Model
         'network',
         'hardware',
     ];
+
+    // Relations
+    public function reporter()
+    {
+        return $this->belongsTo(User::class, 'reporter_id');
+    }
+
+    public function assignee()
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }   
+
+    public function sourceTicket()
+    {
+        return $this->belongsTo(Ticket::class, 'source_ticket_id');
+    }
 }

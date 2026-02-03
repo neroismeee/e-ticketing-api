@@ -80,4 +80,20 @@ class User extends Authenticatable
         'daily',
         'weekly',
     ];
+
+    // Relations
+    public function reportedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'reporter_id');
+    }
+
+    public function assignedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'assigned_to_id');
+    }
+
+    public function convertedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'converted_by');
+    }
 }
