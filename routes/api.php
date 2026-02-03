@@ -6,21 +6,25 @@ use App\Http\Controllers\Api\v1\ErrorController;
 use App\Http\Controllers\Api\v1\TicketController;
 use App\Http\Controllers\Api\v1\FeatureController;
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-    Route::prefix('v1')->group(function () {
 
-        Route::middleware('role:admin, it_staff')->group(function () {
+
+Route::prefix('v1')->group(function () {
+    require __DIR__ . '/auth.php';
+
+    Route::middleware('auth:sanctum', 'throttle:api')->group(function () {
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        });
+
+        Route::middleware('role:admin,it_staff')->group(function () {
             //ticket routes
             Route::get('/tickets', [TicketController::class, 'index']);
             Route::get('/tickets/{id}', [TicketController::class, 'show']);
-            
+
             //error report routes
             Route::get('/error-reports', [ErrorController::class, 'index']);
             Route::get('/error-reports/{id}', [ErrorController::class, 'show']);
-            
+
             //feature request routes
             Route::get('/feature-requests', [FeatureController::class, 'index']);
             Route::get('/feature-requests/{id}', [FeatureController::class, 'show']);
@@ -44,6 +48,3 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 });
-
-
-require __DIR__ . '/auth.php';
