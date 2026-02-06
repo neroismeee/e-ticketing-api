@@ -5,8 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\ErrorController;
 use App\Http\Controllers\Api\v1\TicketController;
 use App\Http\Controllers\Api\v1\FeatureController;
-
-
+use App\Http\Controllers\Api\v1\StatusHistoryController;
 
 Route::prefix('v1')->group(function () {
     require __DIR__ . '/auth.php';
@@ -16,7 +15,7 @@ Route::prefix('v1')->group(function () {
             return $request->user();
         });
 
-        Route::middleware('role:admin,it_staff')->group(function () {
+        Route::middleware('role:admin,it_staff,reporter,team_lead')->group(function () {
             //ticket routes
             Route::get('/tickets', [TicketController::class, 'index']);
             Route::get('/tickets/{id}', [TicketController::class, 'show']);
@@ -28,6 +27,9 @@ Route::prefix('v1')->group(function () {
             //feature request routes
             Route::get('/feature-requests', [FeatureController::class, 'index']);
             Route::get('/feature-requests/{id}', [FeatureController::class, 'show']);
+
+            //status history
+            Route::get('/status-history', [StatusHistoryController::class, 'index']);
         });
 
         Route::middleware('role:it_staff')->group(function () {
