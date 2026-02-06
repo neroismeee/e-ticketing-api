@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\FeatureRequest as RequestsFeatureRequest;
 use App\Http\Resources\FeatureResource;
 use App\Models\FeatureRequest;
-use Illuminate\Http\Request;
 
 class FeatureController extends Controller
 {
