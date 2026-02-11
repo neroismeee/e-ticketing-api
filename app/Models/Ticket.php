@@ -9,7 +9,6 @@ class Ticket extends Model
 {
     protected $table = 'tickets';
     protected $fillable = [
-        'id',
         'title',
         'description',
         'category',
@@ -33,8 +32,19 @@ class Ticket extends Model
         'converted_at',
         'converted_by',
         'conversion_reason',
-        'created_at',
-        'updated_at',
+    ];
+
+    protected $casts = [
+        'date_reported' => 'datetime',
+        'due_date' => 'datetime',
+        'resolved_date' => 'datetime',
+        'closed_date' => 'datetime',
+        'converted_at' => 'datetime',
+        'sla_breached' => 'boolean',
+        'response_time' => 'integer',
+        'resolution_time' => 'integer',
+        'estimated_effort' => 'integer',
+        'actual_effort' => 'integer',
     ];
 
     public const CATEGORIES = [
