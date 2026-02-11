@@ -8,7 +8,6 @@ class ErrorReport extends Model
 {
     protected $table = 'error_reports';
     protected $fillable = [
-        'id',
         'title',
         'description',
         'category',

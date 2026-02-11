@@ -8,7 +8,6 @@ class FeatureRequest extends Model
 {
     protected $table = 'feature_requests';
     protected $fillable = [
-        'id',
         'title',
         'description',
         'request_type',
@@ -37,8 +36,6 @@ class FeatureRequest extends Model
         'post_implementation_notes',
         'source_ticket_id',
         'is_direct_input',
-        'created_at',
-        'updated_at',
     ];
 
     public const REQUEST_TYPES = [

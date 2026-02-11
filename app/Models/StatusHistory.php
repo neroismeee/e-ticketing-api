@@ -8,7 +8,6 @@ class StatusHistory extends Model
 {
     protected $table = 'status_history';
     protected $fillable = [
-        'id',
         'ticket_id',
         'error_report_id',
         'feature_request_id',
