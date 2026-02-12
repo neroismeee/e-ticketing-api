@@ -17,7 +17,6 @@ class FeatureResource extends JsonResource
         return ([
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
             'request_type' => $this->request_type,
             'priority' => $this->priority,
             'status' => $this->status,
