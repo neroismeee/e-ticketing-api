@@ -14,16 +14,16 @@ class ApiResponse
         $meta = null
     ): JsonResponse {
         $response = [
-            'status' => true,
+            'success' => true,
             'message' => $message,
             'data' => $data
         ];
-        
+
         if ($meta) {
             $response['meta'] = $meta;
         }
 
-        return response()->json($response, $code);  
+        return response()->json($response, $code);
     }
 
     public static function paginated(
@@ -32,7 +32,7 @@ class ApiResponse
         string $message = 'Data Retrieved Successfully'
     ): JsonResponse {
         return response()->json([
-            'status' => true,
+            'success' => true,
             'message' => $message,
             'data' => $resource,
             'meta' => [
@@ -49,12 +49,16 @@ class ApiResponse
         $errors = null,
         int $code = 400
     ): JsonResponse {
-        return response()->json([
-            'status' => false,
+
+        $response = [
+            'success' => false,
             'message' => $message,
-            'errors' => $errors
-        ], $code);
+        ];
+
+        if (!is_null($errors)) {
+            $response['errors'] = $errors;
+        }
+
+        return response()->json($response, $code);
     }
 }
-
-
