@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ErrorReport\StoreErrorReportRequest;
 use App\Http\Requests\ErrorReport\UpdateErrorReportRequest;
 use App\Models\ErrorReport;
-use App\Http\Requests\ErrorRequest;
 use App\Http\Resources\ErrorDetailResource;
 use App\Http\Resources\ErrorResource;
 
@@ -32,7 +31,7 @@ class ErrorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ErrorRequest $request)
+    public function store(StoreErrorReportRequest $request)
     {
         $error = ErrorReport::create($request->validated());
 
