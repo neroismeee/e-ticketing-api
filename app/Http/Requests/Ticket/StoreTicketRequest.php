@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Ticket;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Ticket;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
-class TicketRequest extends FormRequest
+class StoreTicketRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -48,27 +46,5 @@ class TicketRequest extends FormRequest
             'converted_at' => 'nullable|date',
             'conversion_reason' => 'nullable|string|max:255',
         ];
-    }
-
-    public function messages()
-    {
-        return [
-            'category.in' => 'The selected category is invalid.',
-            'priority.in' => 'The selected priority is invalid.',
-            'status.in' => 'The selected status is invalid.',
-            'assigned_team.in' => 'The selected assigned team is invalid.',
-            'converted_to_type.in' => 'The selected converted to type is invalid.',
-        ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(
-            response()->json([
-                'status' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
-            ], 422)
-        );
     }
 }
