@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FeatureRequest as RequestsFeatureRequest;
+use App\Http\Requests\FeatureRequest\StoreFeatureRequest;
+use App\Http\Requests\FeatureRequest\UpdateFeatureRequest;
+use App\Http\Resources\FeatureDetailResource;
 use App\Http\Resources\FeatureResource;
 use App\Models\FeatureRequest;
 
@@ -14,62 +17,67 @@ class FeatureController extends Controller
      */
     public function index()
     {
-        $data = FeatureResource::collection(FeatureRequest::orderBy('created_at', 'desc')->get());
-        return response()->json([
-            'status' => true,
-            'message' => 'List of Feature Requests',
-            'data' => $data
-        ], 200);
+        $feature = FeatureRequest::with(['assignee', 'reporter', 'approver'])
+            ->latest()
+            ->paginate(10);
+
+        return ApiResponse::paginated(
+            $feature,
+            FeatureResource::collection($feature),
+            'Feature Request retrieved successfully'
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(RequestsFeatureRequest $request)
+    public function store(StoreFeatureRequest $request)
     {
-        $data = $request->validated();
+        $feature = FeatureRequest::create($request->validated());
 
-        $featureRequest = FeatureRequest::create($data);    
-        return response()->json([
-            'status' => true,
-            'message' => 'Feature Request Created Successfully',
-            'data' => $featureRequest
-        ], 201);
+        return ApiResponse::success(
+            new FeatureDetailResource($feature),
+            'Feature Request created successfully',
+            201
+        );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(FeatureRequest $feature)
     {
-        $data = FeatureRequest::findOrFail($id);
-        return response()->json($data, 200);
-    }
+        $feature->load(['assignee', 'reporter', 'approver']);
 
+        return ApiResponse::success(
+            new FeatureDetailResource($feature),
+            'Feature Request retrieved successfully',
+        );
+    }
+    
     /**
      * Update the specified resource in storage.
      */
-    public function update(RequestsFeatureRequest $request, string $id)
+    public function update(UpdateFeatureRequest $request, FeatureRequest $feature)
     {
-        $data = FeatureRequest::findOrFail($id);
-        $data->update($request->all());
-        return response()->json([
-            'status' => true,
-            'message' => 'Feature Request Updated Successfully',
-            'data' => $data
-        ], 200);
+        $feature->update($request->validated());
+
+        return ApiResponse::success(
+            new FeatureDetailResource($feature),
+            'Feature Request updated successfully',
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(FeatureRequest $feature)
     {
-        $data = FeatureRequest::findOrFail($id);
-        $data->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'Feature Request Deleted Successfully',
-        ], 200);
+        $feature->delete();
+
+        return ApiResponse::success(
+            null,
+            'Feature Request deleted successfully'
+        );
     }
 }
