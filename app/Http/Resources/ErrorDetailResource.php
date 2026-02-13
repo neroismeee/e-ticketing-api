@@ -14,6 +14,29 @@ class ErrorDetailResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'category' => $this->category,
+            'priority' => $this->priority,
+            'status' => $this->status,
+            'reporter_id' => $this->reporter_id,
+            'assigned_to_id' => $this->assigned_to_id,
+            'assigned_team' => $this->assigned_team,
+            'date_reported' => $this->date_reported,
+            'start_date' => $this->start_date,
+            'due_date' => $this->due_date,
+            'completion_date' => $this->completion_date,
+            'estimated_effort' => $this->estimated_effort,
+            'actual_effort' => $this->actual_effort,
+            'sla_time_elapsed' => $this->sla_time_elapsed,
+            'sla_time_remaining' => $this->sla_time_remaining,
+            'sla_breached' => $this->sla_breached,
+            'source_ticket_id' => $this->source_ticket_id,
+            'is_direct_input' => $this->is_direct_input,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+        ];
     }
 }

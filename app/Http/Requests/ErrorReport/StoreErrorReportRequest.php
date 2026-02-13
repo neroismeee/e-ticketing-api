@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\ErrorReport;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\ErrorReport;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;   
 
-class ErrorRequest extends FormRequest
+class StoreErrorReportRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -45,16 +43,5 @@ class ErrorRequest extends FormRequest
             'source_ticket_id' => 'nullable|integer',
             'is_direct_input' => 'required|boolean',
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(
-            response()->json([
-                'status' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
-            ], 422)
-        );
     }
 }

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ErrorReport\StoreErrorReportRequest;
+use App\Http\Requests\ErrorReport\UpdateErrorReportRequest;
 use App\Models\ErrorReport;
-use Illuminate\Http\Request;
 use App\Http\Requests\ErrorRequest;
+use App\Http\Resources\ErrorDetailResource;
 use App\Http\Resources\ErrorResource;
 
 class ErrorController extends Controller
@@ -15,12 +18,15 @@ class ErrorController extends Controller
      */
     public function index()
     {
-        $data = ErrorResource::collection(ErrorReport::latest()->get());
-        return response()->json([
-            'status' => true,
-            'message' => 'List of Error Reports',
-            'data' => $data
-        ], 200);
+        $error = ErrorReport::with(['reporter', 'assignee'])
+            ->latest()
+            ->paginate(10);
+
+        return ApiResponse::paginated(
+            $error,
+            ErrorResource::collection($error),
+            'Error Report retrieved successfully'
+        );
     }
 
     /**
@@ -28,49 +34,51 @@ class ErrorController extends Controller
      */
     public function store(ErrorRequest $request)
     {
-        $data = $request->validated();
+        $error = ErrorReport::create($request->validated());
 
-        $errorReport = ErrorReport::create($data);
-        return response()->json([
-            'status' => true,
-            'message' => 'Error Report Created Successfully',
-            'data' => $errorReport
-        ], 201);
+        return ApiResponse::success(
+            new ErrorDetailResource($error),
+            'Error Report created successfully'
+        );
+        
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(ErrorReport $error)
     {
-        $data = ErrorReport::findOrFail($id);
-        return response()->json($data, 200);
+        $error->load(['reporter', 'assignee']);
+
+        return ApiResponse::success(
+            new ErrorDetailResource($error),
+            'Error Report retrieved successfully',
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ErrorRequest $request, string $id)
+    public function update(UpdateErrorReportRequest $request, ErrorReport $error)
     {
-        $data = ErrorReport::findOrFail($id);
-        $data->update($request->all());
-        return response()->json([
-            'status' => true,
-            'message' => 'Error Report Updated Successfully',
-            'data' => $data
-        ], 200);
+        $error->update($request->validated());
+
+        return ApiResponse::success(
+            new ErrorDetailResource($error),
+            'Error Report updated successfully',
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(ErrorReport $error)
     {
-        $data = ErrorReport::findOrFail($id);
-        $data->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'Error Report Deleted Successfully',
-        ], 200);
+        $error->delete();
+
+        return ApiResponse::success(
+            null,
+            'Error Report deleted successfully',
+        );
     }
 }
