@@ -17,7 +17,6 @@ class ErrorResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
             'category' => $this->category,
             'priority' => $this->priority,
             'status' => $this->status,
