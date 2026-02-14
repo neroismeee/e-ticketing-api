@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StoreUserRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 
 class RegisteredUserController extends Controller
@@ -15,18 +16,13 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(UserRequest $request): JsonResponse
+    public function store(StoreUserRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        $user = User::create([$request->validated()]);
 
-        $user = User::create($data);
-
-        event(new Registered($user));
-
-        return response()->json([
-            'status' => true,
-            'message' => 'User Registered Successfully',
-            'data' => $user
-        ], 201);
+        return ApiResponse::success(
+            new UserResource($user),
+            'User created successfully'
+        );
     }
 }
