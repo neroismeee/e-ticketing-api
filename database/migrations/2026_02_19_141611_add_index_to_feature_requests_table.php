@@ -29,14 +29,14 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('feature_requests', function (Blueprint $table) {
-            $table->dropIndex(['feature_requests_request_type_index']);
-            $table->dropIndex(['feature_requests_priority_index']);
-            $table->dropIndex(['feature_requests_status_index']);
-            $table->dropIndex(['feature_requests_reporter_id_index']);
-            $table->dropIndex(['feature_requests_assigned_to_id_index']);
-            $table->dropIndex(['feature_requests_sla_breached_index']);
-            $table->dropIndex(['feature_requests_source_ticket_id_index']);
-            $table->dropIndex(['feature_requests_is_direct_input_index']);
+            $table->dropIndex(['request_type']);
+            $table->dropIndex(['priority']);
+            $table->dropIndex(['status']);
+            $table->dropIndex(['reporter_id']);
+            $table->dropIndex(['assigned_to_id']);
+            $table->dropIndex(['sla_breached']);
+            $table->dropIndex(['source_ticket_id']);
+            $table->dropIndex(['is_direct_input']);
         });
     }
 };
