@@ -18,8 +18,15 @@ return new class extends Migration
                 $table->string('category');
                 $table->string('priority');
                 $table->string('status');
-                $table->string('reporter_id');
-                $table->string('assigned_to_id')->nullable();
+                $table->foreignId('reporter_id')
+                      ->constrained('users')
+                      ->onUpdate('cascade')
+                      ->onDelete('cascade');
+                $table->foreignId('assigned_to_id')
+                      ->nullable()
+                      ->constrained('users')
+                      ->onUpdate('cascade')
+                      ->onDelete('cascade');
                 $table->string('assigned_team')->nullable();
                 $table->timestamp('date_reported');
                 $table->timestamp('due_date')->nullable();
@@ -30,13 +37,21 @@ return new class extends Migration
                 $table->decimal('resolution_time')->nullable();
                 $table->decimal('estimated_effort')->nullable();
                 $table->decimal('actual_effort')->nullable();
-                $table->string('parent_ticket_id')->nullable();
+                $table->foreignId('parent_ticket_id')
+                      ->nullable()
+                      ->constrained('tickets')
+                      ->nullOnDelete();
                 $table->string('converted_to_type')->nullable();
                 $table->string('converted_to_id')->nullable();
                 $table->timestamp('converted_at')->nullable();
-                $table->string('converted_by')->nullable();
+                $table->foreignId('converted_by')
+                      ->nullable()
+                      ->constrained('users')
+                      ->onUpdate('cascade')
+                      ->onDelete('cascade');
                 $table->text('conversion_reason')->nullable();
                 $table->timestamps();
+
             });
     }
 
