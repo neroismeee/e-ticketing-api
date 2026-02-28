@@ -21,8 +21,15 @@ return new class extends Migration
             $table->string('priority');
             $table->string('status');
             $table->integer('progress')->nullable()->default(0);
-            $table->string('reporter_id');
-            $table->string('assigned_to_id')->nullable();
+            $table->foreignId('reporter_id')
+                  ->constrained('users')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
+            $table->foreignId('assigned_to_id')
+                  ->nullable()
+                  ->constrained('users')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->string('assigned_team')->nullable();
             $table->timestamp('date_submitted')->useCurrent();
             $table->timestamp('approval_date')->nullable();
@@ -36,12 +43,20 @@ return new class extends Migration
             $table->decimal('sla_time_elapsed', 10, 2)->nullable();
             $table->decimal('sla_time_remaining', 10, 2)->nullable();
             $table->boolean('sla_breached')->nullable()->default(false);
-            $table->string('approved_by')->nullable();
+            $table->foreignId('approved_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->text('rejection_reason')->nullable();
             $table->text('roi_impact')->nullable();
             $table->text('quality_impact')->nullable();
             $table->text('post_implementation_notes')->nullable();
-            $table->string('source_ticket_id')->nullable();
+            $table->foreignId('source_ticket_id')
+                  ->nullable()
+                  ->constrained('tickets')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->boolean('is_direct_input')->default(false)->nullable();
             $table->timestamps();
         });
