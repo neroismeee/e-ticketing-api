@@ -79,17 +79,17 @@ class User extends Authenticatable
     ];
 
     // Relations
-    public function reportedTickets()
+    public function reporter()
     {
         return $this->hasMany(Ticket::class, 'reporter_id');
     }
 
-    public function assignedTickets()
+    public function assignee()
     {
         return $this->hasMany(Ticket::class, 'assigned_to_id');
     }
 
-    public function convertedTickets()
+    public function convertBy()
     {
         return $this->hasMany(Ticket::class, 'converted_by');
     }

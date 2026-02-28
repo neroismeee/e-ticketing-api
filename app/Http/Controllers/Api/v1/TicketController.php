@@ -18,7 +18,7 @@ class TicketController extends Controller
 
     public function index()
     {
-        $tickets = Ticket::with(['reporter', 'assignee'])
+        $tickets = Ticket::with(['reportedTickets', 'assignedTickets'])
             ->latest()
             ->paginate(10);
         return ApiResponse::paginated(
@@ -47,7 +47,7 @@ class TicketController extends Controller
      */
     public function show(Ticket $ticket)
     {
-        $ticket->load(['reporter', 'assignee']);
+        $ticket->load(['reportedTickets', 'assignedTickets']);
 
         return ApiResponse::success(
             new TicketDetailResource($ticket),

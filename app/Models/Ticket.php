@@ -87,12 +87,12 @@ class Ticket extends Model
     ];
 
     // Relations
-    public function reporter()
+    public function reportedTickets()
     {
         return $this->belongsTo(User::class, 'reporter_id');
     }
 
-    public function assignee()
+    public function assignedTickets()
     {
         return $this->belongsTo(User::class, 'assigned_to_id');
     }
@@ -107,6 +107,13 @@ class Ticket extends Model
         return $this->belongsTo(Ticket::class, 'parent_ticket_id');
     }
 
+    public function featureRequest()
+    {
+        return $this->hasMany(FeatureRequest::class, 'source_ticket_id');
+    }
     
-
+    public function errorReport()
+    {
+        return $this->hasMany(ErrorReport::class, 'source_ticket_id');
+    }
 }
