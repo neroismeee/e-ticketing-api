@@ -18,8 +18,15 @@ return new class extends Migration
             $table->string('category');
             $table->string('priority');
             $table->string('status');
-            $table->string('reporter_id');
-            $table->string('assigned_to_id')->nullable();
+            $table->foreignId('reporter_id')
+                  ->constrained('users')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
+            $table->foreignId('assigned_to_id')
+                  ->nullable()
+                  ->constrained('users')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->string('assigned_team')->nullable();
             $table->timestamp('date_reported');
             $table->timestamp('start_date')->nullable();
@@ -30,7 +37,11 @@ return new class extends Migration
             $table->decimal('sla_time_elapsed')->nullable();
             $table->decimal('sla_time_remaining')->nullable();
             $table->boolean('sla_breached')->default(false)->nullable();
-            $table->string('source_ticket_id')->nullable();
+            $table->foreignId('source_ticket_id')
+                  ->nullable()
+                  ->constrained('tickets')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->boolean('is_direct_input')->default(false)->nullable();
             $table->timestamps();
         });
