@@ -18,7 +18,7 @@ class RegisteredUserController extends Controller
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $user = User::create([$request->validated()]);
+        $user = User::create($request->validated());
 
         return ApiResponse::success(
             new UserResource($user),
