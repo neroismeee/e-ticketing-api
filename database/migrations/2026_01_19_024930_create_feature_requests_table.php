@@ -14,13 +14,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('feature_requests', function (Blueprint $table) {
-            $table->id()->primary();
+            $table->id();
             $table->string('title');
             $table->text('description');
             $table->string('request_type');
             $table->string('priority');
             $table->string('status');
-            $table->integer('progress')->nullable()->default(0);
+            $table->integer('progress')->default(0);
             $table->foreignId('reporter_id')
                   ->constrained('users')
                   ->onUpdate('cascade')
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->decimal('actual_effort', 10, 2)->nullable();
             $table->decimal('sla_time_elapsed', 10, 2)->nullable();
             $table->decimal('sla_time_remaining', 10, 2)->nullable();
-            $table->boolean('sla_breached')->nullable()->default(false);
+            $table->boolean('sla_breached')->default(false);
             $table->foreignId('approved_by')
                   ->nullable()
                   ->constrained('users')
@@ -57,7 +57,7 @@ return new class extends Migration
                   ->constrained('tickets')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
-            $table->boolean('is_direct_input')->default(false)->nullable();
+            $table->boolean('is_direct_input')->default(false);
             $table->timestamps();
         });
     }

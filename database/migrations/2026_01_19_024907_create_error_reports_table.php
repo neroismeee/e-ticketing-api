@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('error_reports', function (Blueprint $table) {
-            $table->id()->primary();
+            $table->id();
             $table->string('title');
             $table->text('description');
             $table->string('category');
@@ -36,13 +36,13 @@ return new class extends Migration
             $table->decimal('actual_effort')->nullable();
             $table->decimal('sla_time_elapsed')->nullable();
             $table->decimal('sla_time_remaining')->nullable();
-            $table->boolean('sla_breached')->default(false)->nullable();
+            $table->boolean('sla_breached')->default(false);
             $table->foreignId('source_ticket_id')
                   ->nullable()
                   ->constrained('tickets')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
-            $table->boolean('is_direct_input')->default(false)->nullable();
+            $table->boolean('is_direct_input')->default(false);
             $table->timestamps();
         });
     }
