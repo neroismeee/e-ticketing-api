@@ -39,9 +39,9 @@ class StoreErrorReportRequest extends FormRequest
             'actual_effort' => 'nullable|integer',
             'sla_time_elapsed' => 'nullable|integer',
             'sla_time_remaining' => 'nullable|integer',
-            'sla_breached' => 'required|boolean',
+            'sla_breached' => 'nullable|boolean',
             'source_ticket_id' => 'nullable|integer',
-            'is_direct_input' => 'required|boolean',
+            'is_direct_input' => 'nullable|boolean',
         ];
     }
 }
