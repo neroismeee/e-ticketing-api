@@ -37,7 +37,8 @@ class ErrorController extends Controller
 
         return ApiResponse::success(
             new ErrorDetailResource($error),
-            'Error Report created successfully'
+            'Error Report created successfully',
+            201
         );
         
     }
