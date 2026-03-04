@@ -35,7 +35,7 @@ class StoreTicketRequest extends FormRequest
             'due_date' => 'nullable|date',
             'resolved_date' => 'nullable|date',
             'closed_date' => 'nullable|date',
-            'sla_breached' => 'required|boolean',
+            'sla_breached' => 'boolean',
             'response_time' => 'nullable|integer',
             'resolution_time' => 'nullable|integer',
             'estimated_effort' => 'nullable|integer',
