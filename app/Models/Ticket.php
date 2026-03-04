@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
+    use HasFactory;
     protected $table = 'tickets';
     protected $fillable = [
         'title',
@@ -109,11 +111,12 @@ class Ticket extends Model
 
     public function featureRequest()
     {
-        return $this->hasMany(FeatureRequest::class, 'source_ticket_id');
+        return $this->hasOne(FeatureRequest::class, 'source_ticket_id');
     }
     
     public function errorReport()
     {
-        return $this->hasMany(ErrorReport::class, 'source_ticket_id');
+        return $this->hasOne(ErrorReport::class, 'source_ticket_id');
     }
+
 }
