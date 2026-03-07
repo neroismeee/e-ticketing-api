@@ -12,7 +12,7 @@ class MakeServiceCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:service {name}';
+    protected $signature = "make:service {name}";
 
     /**
      * The console command description.
@@ -32,7 +32,7 @@ class MakeServiceCommand extends Command
     public function handle(): void
     {
         $name = $this->argument('name');
-        $path = app_path("Services\`$name`.php");
+        $path = app_path("Services/{$name}.php");
         $directory = app_path('Services');
 
         if (!$this->files->exists($directory)) {
@@ -47,7 +47,7 @@ class MakeServiceCommand extends Command
         $this->files->put($path, $this->buildClass($name));
 
         $this->info("Service {$name} created successfully");
-        $this->line("-> app\Services\{$name}.php");
+        $this->line("-> app/Services/{$name}.php");
     }
 
     private function buildClass(string $name) : string 
