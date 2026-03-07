@@ -52,9 +52,10 @@ return new class extends Migration
             $table->text('roi_impact')->nullable();
             $table->text('quality_impact')->nullable();
             $table->text('post_implementation_notes')->nullable();
-            $table->foreignId('source_ticket_id')
-                  ->nullable()
-                  ->constrained('tickets')
+            $table->string('source_ticket_id')->nullable();
+            $table->foreign('source_ticket_id')
+                  ->references('id')
+                  ->on('tickets')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
             $table->boolean('is_direct_input')->default(false);
