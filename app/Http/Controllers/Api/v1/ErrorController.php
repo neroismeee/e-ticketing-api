@@ -9,6 +9,8 @@ use App\Http\Requests\ErrorReport\UpdateErrorReportRequest;
 use App\Models\ErrorReport;
 use App\Http\Resources\ErrorDetailResource;
 use App\Http\Resources\ErrorResource;
+use App\Services\ErrorReportService;
+use PhpParser\Node\Expr\FuncCall;
 
 class ErrorController extends Controller
 {
@@ -31,9 +33,14 @@ class ErrorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    public function __construct(private ErrorReportService $errorReportService){}
+
     public function store(StoreErrorReportRequest $request)
     {
-        $error = ErrorReport::create($request->validated());
+        $data = $request->validated();
+        $data['id'] = $this->errorReportService->generateErrorReportId();
+
+        $error = ErrorReport::create($data);
 
         return ApiResponse::success(
             new ErrorDetailResource($error),
