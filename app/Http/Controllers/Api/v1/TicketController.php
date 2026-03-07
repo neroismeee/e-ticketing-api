@@ -9,6 +9,8 @@ use App\Http\Requests\Ticket\UpdateTicketRequest;
 use App\Models\Ticket;
 use App\Http\Resources\TicketDetailResource;
 use App\Http\Resources\TicketResource;
+use App\Services\TicketService;
+use Carbon\Carbon;
 
 class TicketController extends Controller
 {
@@ -31,9 +33,14 @@ class TicketController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    public function __construct(private TicketService $ticketService) {}
+
     public function store(StoreTicketRequest $request)
     {
-        $ticket = Ticket::create($request->validated());
+        $data = $request->validated();
+        $data['id'] = $this->ticketService->generateTicketId(); 
+        
+        $ticket = Ticket::create($data);
 
         return ApiResponse::success(
             new TicketDetailResource($ticket),
@@ -74,12 +81,10 @@ class TicketController extends Controller
     public function destroy(Ticket $ticket)
     {
         $ticket->delete();
-        
+
         return ApiResponse::success(
             null,
             'Ticket deleted successfully'
         );
     }
-
-    
 }
