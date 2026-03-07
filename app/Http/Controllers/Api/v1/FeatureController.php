@@ -9,6 +9,7 @@ use App\Http\Requests\FeatureRequest\UpdateFeatureRequest;
 use App\Http\Resources\FeatureDetailResource;
 use App\Http\Resources\FeatureResource;
 use App\Models\FeatureRequest;
+use App\Services\FeatureRequestService;
 
 class FeatureController extends Controller
 {
@@ -31,9 +32,14 @@ class FeatureController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    public function __construct(private FeatureRequestService $featureRequestService){}
+
     public function store(StoreFeatureRequest $request)
     {
-        $feature = FeatureRequest::create($request->validated());
+        $data = $request->validated();
+        $data['id'] = $this->featureRequestService->generateFeatureRequestId();
+
+        $feature = FeatureRequest::create($data);
 
         return ApiResponse::success(
             new FeatureDetailResource($feature),
