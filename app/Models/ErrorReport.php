@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ErrorReport extends Model
 {
-    protected $table = 'error_reports';
+    protected $keyType = 'string';
+    public $incrementing = false;
     protected $fillable = [
+        'id',
         'title',
         'description',
         'category',

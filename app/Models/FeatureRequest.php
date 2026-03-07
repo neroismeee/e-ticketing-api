@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class FeatureRequest extends Model
 {
-    protected $table = 'feature_requests';
+    protected $keyType = 'string';
+    public $incrementing = false;
     protected $fillable = [
+        'id',
         'title',
         'description',
         'request_type',
