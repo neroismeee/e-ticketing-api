@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\v1\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\ErrorController;
@@ -27,8 +28,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/feature-requests', [FeatureController::class, 'index']);
             Route::get('/feature-requests/{feature}', [FeatureController::class, 'show']);
 
-            //status history
-            Route::get('/status-history', [TicketController::class, 'status']);
+            //comment
+            Route::get('/comments', [CommentController::class, 'index']);
+            Route::get('/comments/{comment}', [CommentController::class, 'show']);
         });
 
         Route::middleware('role:it_staff')->group(function () {
@@ -46,6 +48,11 @@ Route::prefix('v1')->group(function () {
             Route::post('/feature-requests', [FeatureController::class, 'store']);
             Route::put('/feature-requests/{feature}', [FeatureController::class, 'update']);
             Route::delete('/feature-requests/{feature}', [FeatureController::class, 'destroy']);
+
+            //comment routes
+            Route::post('/comments', [CommentController::class, 'store']);
+            Route::put('/comments/{comment}', [CommentController::class, 'update']);
+            Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
         });
     });
 });
