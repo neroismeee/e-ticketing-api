@@ -13,26 +13,29 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ticket_id')
-                  ->nullable()
-                  ->constrained()
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
-            $table->foreignId('error_report_id')
-                  ->nullable()
-                  ->constrained()
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
-            $table->foreignId('feature_request_id')
-                  ->nullable()
-                  ->constrained()
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
+            $table->string('ticket_id')->nullable();
+            $table->foreign('ticket_id')
+                ->references('id')
+                ->on('tickets')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->string('error_report_id')->nullable();
+            $table->foreign('error_report_id')
+                ->references('id')
+                ->on('error_reports')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->string('feature_request_id')->nullable();
+            $table->foreign('feature_request_id')
+                ->references('id')
+                ->on('feature_requests')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->foreignId('user_id')
-                  ->nullable()
-                  ->constrained()
-                  ->onUpdate('cascade')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained()
+                ->onUpdate('cascade')
+                ->nullOnDelete();
             $table->text('content');
             $table->boolean('is_internal')->default(false);
             $table->timestamps();
