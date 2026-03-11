@@ -50,8 +50,8 @@ class StoreErrorReportRequest extends FormRequest
             'date_reported' => 'required|date',
             'start_date' => 'nullable|date',
             'due_date' => 'nullable|date',
-            'estimated_effort' => 'nullable|integer',
-            'source_ticket_id' => 'nullable|integer',
+            'estimated_effort' => 'nullable|numeric|decimal:0,2',
+            'source_ticket_id' => 'nullable|integer|exists:error_reports,id',
             'is_direct_input' => 'required|boolean',
         ];
     }
