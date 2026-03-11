@@ -33,7 +33,7 @@ class MakeServiceCommand extends Command
     {
         $name = $this->argument('name');
         $path = app_path("Services/{$name}.php");
-        $directory = app_path('Services');
+        $directory = dirname("$path");
 
         if (!$this->files->exists($directory)) {
             $this->files->makeDirectory($directory, 0755, true);
@@ -52,12 +52,17 @@ class MakeServiceCommand extends Command
 
     private function buildClass(string $name) : string 
     {
+        $className = basename(str_replace('/', DIRECTORY_SEPARATOR, $name));
+        $namespace = 'App\\Services' . (str_contains($name, '/')
+            ? '\\' . str_replace('/', '\\', dirname($name))
+            : ''); 
+    
         return <<<PHP
         <?php
         
-        namespace App\Services;
+        namespace {$namespace};
 
-        class {$name}
+        class {$className}
         {
             public function __construct()
             {
