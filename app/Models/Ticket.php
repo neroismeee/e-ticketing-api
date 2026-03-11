@@ -108,7 +108,12 @@ class Ticket extends Model
 
     public function parentTicket()
     {
-        return $this->belongsTo(Ticket::class, 'parent_ticket_id');
+        return $this->belongsTo(Ticket::class, 'parent_ticket_id', 'id');
+    }
+
+    public function childTicket()
+    {
+        return $this->hasMany(Ticket::class, 'parent_ticket_id', 'id');
     }
 
     public function featureRequest()
