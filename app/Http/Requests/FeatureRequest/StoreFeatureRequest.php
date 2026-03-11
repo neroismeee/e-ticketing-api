@@ -23,7 +23,7 @@ class StoreFeatureRequest extends FormRequest
         $this->merge([
             'reporter_id' => $this->user()->id,
             'date_submitted' => Carbon::now(),
-            'status' => 'submission',
+            'status' => 'pending_approval',
             'progress' => 0,
             'is_direct_input' => !$this->has('source_ticket_id') || is_null($this->source_ticket_id)
         ]);  
@@ -50,7 +50,7 @@ class StoreFeatureRequest extends FormRequest
             'start_date' => 'nullable|date',
             'due_date' => 'nullable|date',
             'review_date' => 'nullable|date',
-            'estimated_effort' => 'nullable|integer',
+            'estimated_effort' => 'nullable|numeric|decimal:0,2',
             'roi_impact' => 'nullable|string',
             'quality_impact' => 'nullable|string',
             'source_ticket_id' => 'nullable|integer|exists:feature_requests,id',
