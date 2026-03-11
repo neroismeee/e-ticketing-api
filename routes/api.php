@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\ErrorController;
 use App\Http\Controllers\Api\v1\TicketController;
 use App\Http\Controllers\Api\v1\FeatureController;
+use App\Http\Controllers\api\v1\TIcketConversionController;
+use App\Services\Ticket\TicketConversionService;
 
 Route::prefix('v1')->group(function () {
     require __DIR__ . '/auth.php';
@@ -22,11 +24,11 @@ Route::prefix('v1')->group(function () {
 
             //error report routes
             Route::get('/error-reports', [ErrorController::class, 'index']);
-            Route::get('/error-reports/{error}', [ErrorController::class, 'show']);
+            Route::get('/error-reports/{error}', [ErrorController::class, 'show'])->name('error-reports.show');
 
             //feature request routes
             Route::get('/feature-requests', [FeatureController::class, 'index']);
-            Route::get('/feature-requests/{feature}', [FeatureController::class, 'show']);
+            Route::get('/feature-requests/{feature}', [FeatureController::class, 'show'])->name('feature-requests.show');
 
             //comment
             Route::get('/comments', [CommentController::class, 'index']);
@@ -38,6 +40,10 @@ Route::prefix('v1')->group(function () {
             Route::post('/tickets', [TicketController::class, 'store']);
             Route::put('/tickets/{ticket}', [TicketController::class, 'update']);
             Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy']);
+            Route::post('/tickets/{ticket}/convert/error-report', [TIcketConversionController::class, 'toErrorReport'])
+                ->name('tickets.convert.error-report');
+            Route::post('/tickets/{ticket}/convert/feature-request', [TIcketConversionController::class, 'toFeatureRequest'])
+                ->name('tickets.convert.error-report');
 
             //error report routes
             Route::post('/error-reports', [ErrorController::class, 'store']);
