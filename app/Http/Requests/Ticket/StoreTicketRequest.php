@@ -21,7 +21,7 @@ class StoreTicketRequest extends FormRequest
         $this->merge([
             'status' => 'pending_approval',
             'reporter_id' => $this->user()->id,
-            'date_reported' => Carbon::now()
+            'date_reported' => Carbon::now(),
         ]);
     }
 
@@ -46,7 +46,7 @@ class StoreTicketRequest extends FormRequest
             'response_time' => 'nullable|numeric|decimal:0,2',
             'resolution_time' => 'nullable|numeric|decimal:0,2',
             'estimated_effort' => 'nullable|numeric|decimal:0,2',
-            'parent_ticket_id' => 'nullable|integer|exists:tickets,id',
+            'parent_ticket_id' => 'nullable|string|exists:tickets,id',
         ];
     }
 }
