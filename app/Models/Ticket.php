@@ -121,4 +121,28 @@ class Ticket extends Model
         return $this->hasOne(ErrorReport::class, 'source_ticket_id');
     }
 
+    // helpers
+    public function isConverted()
+    {
+        return $this->status === 'converted';
+    }
+
+    public function canBeConverted()
+    {
+        return in_array($this->status, [
+            'pending_approval', 'assigned', 'in_progress', 'waiting_for_user'
+        ]);
+    }
+
+    public function convertedUrl()
+    {
+        if (!$this->isConverted()) return null;
+
+        return match($this->converted_to_type) {
+            'error_report' => route('error-report.show', $this->converted_to_id),
+            'feature_request' => route('feature-request.show', $this->converted_to_id),
+            'default' => null
+        };
+    }
+
 }
