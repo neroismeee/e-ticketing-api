@@ -13,17 +13,18 @@ class ConversionFailedException extends Exception
     public function __construct(
         private readonly string $ticketId,
         private readonly array $context = [],
-        string $message = "Conversion failed. Please try again.",
+        string $message = '',
 
     ) {
-        parent::__construct($message);
+        $resolvedMessage = $message ?: $context['message'] ?? 'Conversion failed.';
+        parent::__construct($resolvedMessage);
     }
     /**
      * Report the exception.
      */
     public function report(): void
     {
-        Log::report('Conversion failed', [
+        Log::error('Conversion failed', [
             'ticket_id' => $this->ticketId,
             'context' => $this->context,
             'message' => $this->getMessage(),
