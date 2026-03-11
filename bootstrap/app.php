@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\TicketAlreadyConvertedException;
+use App\Exceptions\TicketCannotBeConvertedException;
 use App\Helpers\ApiResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -28,7 +30,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-
+        $exceptions->dontReport([
+            TicketAlreadyConvertedException::class,
+            TicketCannotBeConvertedException::class
+        ]);
+        
+        // error code exception
         $exceptions->render(function (\Throwable $e, Request $request) {
 
             if (!$request->is('api/*')) {
@@ -60,7 +67,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return ApiResponse::error(
-                'Server error.',
+                'Something went wrong.',
                 null,
                 500
             );
