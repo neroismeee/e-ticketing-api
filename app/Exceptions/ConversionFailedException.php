@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Exceptions;
+
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+class ConversionFailedException extends Exception
+{
+    public function __construct(
+        private readonly string $ticketId,
+        private readonly array $context = [],
+        string $message = "Conversion failed. Please try again.",
+
+    ) {
+        parent::__construct($message);
+    }
+    /**
+     * Report the exception.
+     */
+    public function report(): void
+    {
+        Log::report('Conversion failed', [
+            'ticket_id' => $this->ticketId,
+            'context' => $this->context,
+            'message' => $this->getMessage(),
+            'trace' => $this->getTraceAsString()
+        ]);
+    }
+
+    /**
+     * Render the exception as an HTTP response.
+     */
+    public function render(Request $request): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $this->getMessage()
+        ], 500);
+    }
+
+    // getter
+    public function getTicketId(): string { return $this->ticketId; }
+    public function getContext(): array { return $this->context; }
+}
