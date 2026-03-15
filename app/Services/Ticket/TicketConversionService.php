@@ -22,13 +22,6 @@ class TicketConversionService
 
                 $ticket = Ticket::lockForUpdate()->findOrFail($ticketId);
 
-                if (!$ticket->canBeConverted()) {
-                    throw new TicketCannotBeConvertedException(
-                        ticketId: $ticket->id,
-                        currentStatus: $ticket->status,
-                    );
-                }
-
                 if ($ticket->isConverted()) {
                     throw new TicketAlreadyConvertedException(
                         ticketId: $ticket->id,
@@ -37,6 +30,14 @@ class TicketConversionService
                         convertedAt: $ticket->converted_at
                     );
                 }
+                
+                if (!$ticket->canBeConverted()) {
+                    throw new TicketCannotBeConvertedException(
+                        ticketId: $ticket->id,
+                        currentStatus: $ticket->status,
+                    );
+                }
+
 
                 $errorReport = ErrorReport::create([
                     'id' => $this->generateCode('ERR'),
@@ -71,10 +72,8 @@ class TicketConversionService
                 ]);
 
                 return $errorReport;
-
             } catch (TicketAlreadyConvertedException | TicketCannotBeConvertedException $e) {
                 throw $e;
-
             } catch (QueryException $e) {
                 throw new ConversionFailedException(
                     ticketId: $ticket->id,
@@ -87,18 +86,11 @@ class TicketConversionService
         });
     }
 
-    public function convertToFeatureRequest(string $ticketId, array $data) : FeatureRequest 
+    public function convertToFeatureRequest(string $ticketId, array $data): FeatureRequest
     {
         return DB::transaction(function () use ($ticketId, $data) {
             try {
                 $ticket = Ticket::lockForUpdate()->findOrFail($ticketId);
-
-                if (!$ticket->canBeConverted()) {
-                    throw new TicketCannotBeConvertedException(
-                        ticketId: $ticket->id,
-                        currentStatus: $ticket->status
-                    );
-                }
 
                 if ($ticket->isConverted()) {
                     throw new TicketAlreadyConvertedException(
@@ -108,6 +100,14 @@ class TicketConversionService
                         convertedAt: $ticket->converted_at
                     );
                 }
+
+                if (!$ticket->canBeConverted()) {
+                    throw new TicketCannotBeConvertedException(
+                        ticketId: $ticket->id,
+                        currentStatus: $ticket->status
+                    );
+                }
+
 
                 $featureRequest = FeatureRequest::create([
                     'id' => $this->generateCode('FR'),
@@ -150,10 +150,8 @@ class TicketConversionService
                 ]);
 
                 return $featureRequest;
-
             } catch (TicketAlreadyConvertedException | TicketCannotBeConvertedException $e) {
                 throw $e;
-
             } catch (QueryException $e) {
                 throw new ConversionFailedException(
                     ticketId: $ticket->id,
@@ -167,12 +165,23 @@ class TicketConversionService
     }
 
     // private helper
-    private function generateCode(string $prefix): string {
+    private function generateCode(string $prefix): string
+    {
         $year = now()->year;
         $model = $prefix === 'ERR' ? ErrorReport::class : FeatureRequest::class;
 
-        $count = $model::whereYear('created_at', $year)->count() + 1;
+        $lastRecord = $model::whereYear('created_at', $year)
+            ->lockForUpdate()
+            ->orderBy('id', 'desc')
+            ->first();
 
-        return sprintf('%s-%d-%03d', $prefix, $year, $count);   
+        if ($lastRecord) {
+            $lastNumber = (int) substr($lastRecord->id, -3);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        return sprintf('%s-%d-%03d', $prefix, $year, $nextNumber);
     }
 }
