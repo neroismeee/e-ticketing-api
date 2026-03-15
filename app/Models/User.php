@@ -94,8 +94,4 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class, 'converted_by');
     }
 
-    public function changedBy()
-    {
-        return $this->hasMany(StatusHistory::class, 'changed_by');
-    }
 }
