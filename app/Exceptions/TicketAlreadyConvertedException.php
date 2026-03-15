@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Illuminate\Support\Carbon;
 
 class TicketAlreadyConvertedException extends Exception
 {
@@ -12,11 +13,11 @@ class TicketAlreadyConvertedException extends Exception
         private readonly string $ticketId,
         private readonly string $convertedToType,
         private readonly string $convertedToId,
-        private readonly string $convertedAt,
+        private readonly Carbon $convertedAt,
     ) {
         parent::__construct(
             "Ticket {$ticketId} already converted to " .
-            strtoupper($convertedToType) . "({$convertedToId}) " .
+            strtoupper($convertedToType) . " ({$convertedToId}) " .
             "on {$convertedAt}."
              
         );
@@ -33,7 +34,7 @@ class TicketAlreadyConvertedException extends Exception
                 'ticket_id' => $this->ticketId,
                 'converted_to_type' => $this->convertedToType,
                 'converted_to_id' => $this->convertedToId,
-                'converted_at' => $this->convertedAt
+                'converted_at' => $this->convertedAt ?? Carbon::now()
             ]
         ], 409);
     }
@@ -42,4 +43,5 @@ class TicketAlreadyConvertedException extends Exception
     public function getTicketId(): string { return $this->ticketId; }
     public function getConvertedToType(): string { return $this->convertedToType; }
     public function getConvertedToId(): string { return $this->convertedToId; }
+    public function getConvertedAt(): Carbon { return $this->convertedAt; }
 }
