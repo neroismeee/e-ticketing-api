@@ -5,8 +5,7 @@ namespace App\Http\Requests\FeatureRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\FeatureRequest;
 use Carbon\Carbon;
-
-use function Symfony\Component\Clock\now;
+use Illuminate\Support\Facades\Auth;
 
 class StoreFeatureRequest extends FormRequest
 {
@@ -21,7 +20,7 @@ class StoreFeatureRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'reporter_id' => $this->user()->id,
+            'reporter_id' => Auth::id(),
             'date_submitted' => Carbon::now(),
             'status' => 'pending_approval',
             'progress' => 0,
