@@ -24,6 +24,7 @@ class ConvertToFeatureRequestRequest extends FormRequest
             'status' => 'pending_approval',
             'progress' => 0,
             'reporter_id' => $ticket->reporter_id,
+            'date_submitted' => $ticket->date_reported,
             'is_direct_input' => false
         ]);
     }
