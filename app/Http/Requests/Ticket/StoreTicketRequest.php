@@ -5,6 +5,7 @@ namespace App\Http\Requests\Ticket;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Ticket;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class StoreTicketRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ class StoreTicketRequest extends FormRequest
     {
         $this->merge([
             'status' => 'pending_approval',
-            'reporter_id' => $this->user()->id,
+            'reporter_id' => Auth::id(),
             'date_reported' => Carbon::now(),
         ]);
     }
