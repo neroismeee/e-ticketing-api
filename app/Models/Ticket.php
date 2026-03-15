@@ -55,7 +55,7 @@ class Ticket extends Model
         'software_bug',
         'feature_request',
         'network_issue',
-        'hardware_failure',
+        'hardware_problem',
         'system_error',
         'performance_issue',
     ];
@@ -135,7 +135,10 @@ class Ticket extends Model
     public function canBeConverted()
     {
         return in_array($this->status, [
-            'pending_approval', 'assigned', 'in_progress', 'waiting_for_user'
+            'pending_approval', 
+            'assigned', 
+            'in_progress', 
+            'waiting_for_user'
         ]);
     }
 
