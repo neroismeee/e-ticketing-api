@@ -30,7 +30,7 @@ class TicketConversionService
                         convertedAt: $ticket->converted_at
                     );
                 }
-                
+
                 if (!$ticket->canBeConverted()) {
                     throw new TicketCannotBeConvertedException(
                         ticketId: $ticket->id,
@@ -45,11 +45,11 @@ class TicketConversionService
                     'description' => $data['description'],
                     'category' => $data['category'],
                     'priority' => $data['priority'],
-                    'status' => 'pending_approval',
+                    'status' => $data['status'],
                     'reporter_id' => $ticket->reporter_id,
                     'assigned_to_id' => $ticket->assigned_to_id,
                     'assigned_team' => $ticket->assigned_team,
-                    'date_reported' => Carbon::now(),
+                    'date_reported' => $ticket->date_reported,
                     'start_date' => $data['start_date'] ?? null,
                     'due_date' => $data['due_date'] ?? null,
                     'completion_date' => $data['completion_date'] ?? null,
@@ -59,7 +59,7 @@ class TicketConversionService
                     'sla_time_remaining' => $data['sla_time_remaining'] ?? null,
                     'sla_breached' => $data['sla_breached'] ?? false,
                     'source_ticket_id' => $ticket->id,
-                    'is_direct_input' => false,
+                    'is_direct_input' => $data['is_direct_input'],
                 ]);
 
                 $ticket->update([
@@ -72,8 +72,10 @@ class TicketConversionService
                 ]);
 
                 return $errorReport;
+
             } catch (TicketAlreadyConvertedException | TicketCannotBeConvertedException $e) {
                 throw $e;
+
             } catch (QueryException $e) {
                 throw new ConversionFailedException(
                     ticketId: $ticket->id,
@@ -115,11 +117,11 @@ class TicketConversionService
                     'description' => $data['description'],
                     'request_type' => $data['request_type'],
                     'priority' => $data['priority'],
-                    'status' => 'submission',
-                    'progress' => 0,
+                    'status' => $data['status'],
+                    'progress' => $data['progress'],
                     'reporter_id' => $ticket->reporter_id,
                     'assigned_to_id' => $ticket->assigned_to_id,
-                    'date_submitted' => Carbon::now(),
+                    'date_submitted' => $ticket->date_reported,
                     'approval_date' => $data['approval_date'] ?? null,
                     'assignment_date' => $data['assignment_date'] ?? null,
                     'start_date' => $data['start_date'] ?? null,
@@ -137,7 +139,7 @@ class TicketConversionService
                     'quality_impact' => $data['quality_impact'] ?? null,
                     'post_implementation_notes' => $data['post_implementation_notes'] ?? null,
                     'source_ticket_id' => $ticket->id,
-                    'is_direct_input' => false,
+                    'is_direct_input' => $data['is_direct_input'],
                 ]);
 
                 $ticket->update([
@@ -150,8 +152,10 @@ class TicketConversionService
                 ]);
 
                 return $featureRequest;
+
             } catch (TicketAlreadyConvertedException | TicketCannotBeConvertedException $e) {
                 throw $e;
+                
             } catch (QueryException $e) {
                 throw new ConversionFailedException(
                     ticketId: $ticket->id,
