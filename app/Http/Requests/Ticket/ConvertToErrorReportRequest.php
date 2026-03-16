@@ -21,7 +21,7 @@ class ConvertToErrorReportRequest extends FormRequest
         $ticket = Ticket::find($this->route('ticket'));
         
         $this->merge([
-            'status' => 'pending_approval',
+            'status' => 'in_progress',
             'progress' => 0,
             'reporter_id' => $ticket->reporter_id,
             'date_reported' =>$ticket->date_reported,
