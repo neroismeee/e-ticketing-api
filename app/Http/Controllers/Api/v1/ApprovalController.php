@@ -6,6 +6,7 @@ use App\Exceptions\AlreadyProcessedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FeatureRequest\FeatureApprovalRequest;
 use App\Services\Ticket\FeatureApprovalService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +32,8 @@ class ApprovalController extends Controller
                     'id' => $featureRequest->id,
                     'status' => $featureRequest->status,
                     'approved_by' => $featureRequest->approved_by,
-                    'approved_date' => $featureRequest->approved_date
+                    'approved_date' => Carbon::now()->toDateString(),
+                    'rejection_reason' => $featureRequest->rejection_reason
                 ],
             ]); 
 
