@@ -40,9 +40,9 @@ Route::prefix('v1')->group(function () {
             Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
             Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->name('tickets.update');
             Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('tickets.delete');
-            Route::post('/tickets/{ticket}/convert/error-report', [TIcketConversionController::class, 'toErrorReport'])
+            Route::post('/tickets/{ticket}/convert/error-report', [TicketConversionController::class, 'toErrorReport'])
                 ->name('tickets.convert.error-report');
-            Route::post('/tickets/{ticket}/convert/feature-request', [TIcketConversionController::class, 'toFeatureRequest'])
+            Route::post('/tickets/{ticket}/convert/feature-request', [TicketConversionController::class, 'toFeatureRequest'])
                 ->name('tickets.convert.error-report');
 
             //error report routes
