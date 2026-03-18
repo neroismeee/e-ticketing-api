@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api\v1;
+namespace App\Http\Controllers\Api\v1;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
@@ -9,13 +9,14 @@ use App\Http\Requests\Comment\UpdateCommentRequest;
 use App\Http\Resources\Comment\CommentResource;
 use App\Http\Resources\Comment\CommentDetailResource;
 use App\Models\Comment;
+use Illuminate\Http\JsonResponse;
 
 class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $comment = Comment::with([
             'ticket',
@@ -36,7 +37,7 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCommentRequest $request)
+    public function store(StoreCommentRequest $request): JsonResponse
     {
         $comment = Comment::create($request->validated());
         
@@ -50,7 +51,7 @@ class CommentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Comment $comment)
+    public function show(Comment $comment): JsonResponse
     {
         $comment->load([
             'ticket',
@@ -69,7 +70,7 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCommentRequest $request, Comment $comment)
+    public function update(UpdateCommentRequest $request, Comment $comment): JsonResponse
     {
         $comment->update($request->validated());
 
@@ -82,7 +83,7 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy(Comment $comment): JsonResponse
     {
         $comment->delete();
 

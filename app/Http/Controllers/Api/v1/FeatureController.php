@@ -10,13 +10,13 @@ use App\Http\Resources\FeatureDetailResource;
 use App\Http\Resources\FeatureResource;
 use App\Models\FeatureRequest;
 use App\Services\FeatureRequestService;
-
+use Illuminate\Http\JsonResponse;
 class FeatureController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $feature = FeatureRequest::with(['assignee', 'reporter', 'approver'])
             ->latest()
@@ -32,12 +32,12 @@ class FeatureController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function __construct(private FeatureRequestService $featureRequestService){}
+    public function __construct(private FeatureRequestService $service){}
 
-    public function store(StoreFeatureRequest $request)
+    public function store(StoreFeatureRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $data['id'] = $this->featureRequestService->generateFeatureRequestId();
+        $data['id'] = $this->service->generateFeatureRequestId();
 
         $feature = FeatureRequest::create($data);
 
@@ -51,7 +51,7 @@ class FeatureController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FeatureRequest $feature)
+    public function show(FeatureRequest $feature): JsonResponse
     {
         $feature->load(['assignee', 'reporter', 'approver']);
 
@@ -64,7 +64,7 @@ class FeatureController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFeatureRequest $request, FeatureRequest $feature)
+    public function update(UpdateFeatureRequest $request, FeatureRequest $feature): JsonResponse
     {
         $feature->update($request->validated());
 
@@ -77,7 +77,7 @@ class FeatureController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FeatureRequest $feature)
+    public function destroy(FeatureRequest $feature): JsonResponse
     {
         $feature->delete();
 

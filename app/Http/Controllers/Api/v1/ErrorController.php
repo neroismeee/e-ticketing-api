@@ -10,14 +10,13 @@ use App\Models\ErrorReport;
 use App\Http\Resources\ErrorDetailResource;
 use App\Http\Resources\ErrorResource;
 use App\Services\ErrorReportService;
-use PhpParser\Node\Expr\FuncCall;
-
+use Illuminate\Http\JsonResponse;
 class ErrorController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $error = ErrorReport::with(['reporter', 'assignee'])
             ->latest()
@@ -33,12 +32,12 @@ class ErrorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function __construct(private ErrorReportService $errorReportService){}
+    public function __construct(private ErrorReportService $service){}
 
-    public function store(StoreErrorReportRequest $request)
+    public function store(StoreErrorReportRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $data['id'] = $this->errorReportService->generateErrorReportId();
+        $data['id'] = $this->service->generateErrorReportId();
 
         $error = ErrorReport::create($data);
 
@@ -53,7 +52,7 @@ class ErrorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ErrorReport $error)
+    public function show(ErrorReport $error): JsonResponse
     {
         $error->load(['reporter', 'assignee']);
 
@@ -66,7 +65,7 @@ class ErrorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateErrorReportRequest $request, ErrorReport $error)
+    public function update(UpdateErrorReportRequest $request, ErrorReport $error): JsonResponse
     {
         $error->update($request->validated());
 
@@ -79,7 +78,7 @@ class ErrorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ErrorReport $error)
+    public function destroy(ErrorReport $error): JsonResponse
     {
         $error->delete();
 

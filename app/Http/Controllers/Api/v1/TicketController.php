@@ -10,7 +10,7 @@ use App\Models\Ticket;
 use App\Http\Resources\TicketDetailResource;
 use App\Http\Resources\TicketResource;
 use App\Services\TicketService;
-use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 
 class TicketController extends Controller
 {
@@ -18,7 +18,7 @@ class TicketController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index()
+    public function index(): JsonResponse
     {
         $tickets = Ticket::with(['reportedTickets', 'assignedTickets'])
             ->latest()
@@ -33,12 +33,12 @@ class TicketController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function __construct(private TicketService $ticketService) {}
+    public function __construct(private TicketService $service) {}
 
-    public function store(StoreTicketRequest $request)
+    public function store(StoreTicketRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $data['id'] = $this->ticketService->generateTicketId(); 
+        $data['id'] = $this->service->generateTicketId(); 
         
         $ticket = Ticket::create($data);
 
@@ -52,7 +52,7 @@ class TicketController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Ticket $ticket)
+    public function show(Ticket $ticket): JsonResponse
     {
         $ticket->load(['reportedTickets', 'assignedTickets']);
 
@@ -65,7 +65,7 @@ class TicketController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTicketRequest $request, Ticket $ticket)
+    public function update(UpdateTicketRequest $request, Ticket $ticket): JsonResponse
     {
         $ticket->update($request->validated());
 
@@ -78,7 +78,7 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Ticket $ticket)
+    public function destroy(Ticket $ticket): JsonResponse
     {
         $ticket->delete();
 
