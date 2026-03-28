@@ -13,24 +13,8 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('ticket_id')->nullable();
-            $table->foreign('ticket_id')
-                ->references('id')
-                ->on('tickets')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->string('error_report_id')->nullable();
-            $table->foreign('error_report_id')
-                ->references('id')
-                ->on('error_reports')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->string('feature_request_id')->nullable();
-            $table->foreign('feature_request_id')
-                ->references('id')
-                ->on('feature_requests')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->string('commentable_id');
+            $table->string('commentable_type');
             $table->foreignId('user_id')
                 ->nullable()
                 ->constrained()
@@ -39,6 +23,10 @@ return new class extends Migration
             $table->text('content');
             $table->boolean('is_internal')->default(false);
             $table->timestamps();
+
+            //index
+            $table->index('commentable_id');
+            $table->index('commentable_type');
             $table->index('created_at');
         });
     }
