@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Dom\Comment;
 use Illuminate\Database\Eloquent\Model;
 
 class ErrorReport extends Model
@@ -71,5 +72,10 @@ class ErrorReport extends Model
     public function sourceTicket()
     {
         return $this->belongsTo(Ticket::class, 'source_ticket_id');
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }

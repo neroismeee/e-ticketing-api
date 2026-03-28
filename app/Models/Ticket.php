@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Dom\Comment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -124,6 +125,11 @@ class Ticket extends Model
     public function errorReport()
     {
         return $this->hasOne(ErrorReport::class, 'source_ticket_id');
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     // helpers
