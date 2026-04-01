@@ -10,7 +10,10 @@ use App\Models\ErrorReport;
 use App\Http\Resources\ErrorDetailResource;
 use App\Http\Resources\ErrorResource;
 use App\Services\ErrorReportService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+
 class ErrorController extends Controller
 {
     /**
@@ -32,21 +35,26 @@ class ErrorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function __construct(private ErrorReportService $service){}
+    public function __construct(private ErrorReportService $service) {}
 
     public function store(StoreErrorReportRequest $request): JsonResponse
     {
         $data = $request->validated();
         $data['id'] = $this->service->generateErrorReportId();
 
-        $error = ErrorReport::create($data);
+        $error = ErrorReport::create([
+            ...$data,
+            'reporter_id' => Auth::id(),
+            'date_reported' => Carbon::now(),
+            'status' => 'pending_approval',
+            'progress' => '0',
+        ]);
 
         return ApiResponse::success(
             new ErrorDetailResource($error),
             'Error Report created successfully',
             201
         );
-        
     }
 
     /**

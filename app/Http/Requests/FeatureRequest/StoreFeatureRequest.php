@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use App\Models\FeatureRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class StoreFeatureRequest extends FormRequest
 {
@@ -20,10 +21,7 @@ class StoreFeatureRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'reporter_id' => Auth::id(),
-            'date_submitted' => Carbon::now(),
-            'status' => 'pending_approval',
-            'progress' => 0,
+            'title' => Str::title(trim($this->title)),
             'is_direct_input' => !$this->has('source_ticket_id') || is_null($this->source_ticket_id)
         ]);  
     }
@@ -40,9 +38,6 @@ class StoreFeatureRequest extends FormRequest
             'description' => 'required|string',
             'request_type' => 'required|string|in:' . implode(',', FeatureRequest::REQUEST_TYPES),
             'priority' => 'required|string|in:' . implode(',', FeatureRequest::PRIORITIES),
-            'status' => 'required|string|in:' . implode(',', FeatureRequest::STATUSES),
-            'progress' => 'required|integer|min:0|max:100',
-            'reporter_id' => 'required|integer|exists:users,id',
             'assigned_to_id' => 'nullable|integer|exists:users,id',
             'assigned_team' => 'nullable|string|max:255|in:' . implode(',', FeatureRequest::TEAMS),
             'assignment_date' => 'nullable|date',

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Ticket;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class StoreTicketRequest extends FormRequest
 {
@@ -20,9 +21,7 @@ class StoreTicketRequest extends FormRequest
     public function prepareForValidation()
     {
         $this->merge([
-            'status' => 'pending_approval',
-            'reporter_id' => Auth::id(),
-            'date_reported' => Carbon::now(),
+            'title' => Str::title(trim($this->title))
         ]);
     }
 
@@ -38,11 +37,8 @@ class StoreTicketRequest extends FormRequest
             'description' => 'required|string',
             'category' => 'required|string|in:' . implode(',', Ticket::CATEGORIES),
             'priority' => 'required|string|in:' . implode(',', Ticket::PRIORITIES),
-            'status' => 'required|string|in:' . implode(',', Ticket::STATUSES),
-            'reporter_id' => 'required|integer|exists:users,id',
             'assigned_to_id' => 'nullable|integer|exists:users,id',
             'assigned_team' => 'nullable|string|max:255|in:' . implode(',', Ticket::ASSIGNED_TEAMS),
-            'date_reported' => 'required|date',
             'due_date' => 'nullable|date',
             'response_time' => 'nullable|numeric|decimal:0,2',
             'resolution_time' => 'nullable|numeric|decimal:0,2',
