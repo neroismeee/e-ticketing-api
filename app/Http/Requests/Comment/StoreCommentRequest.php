@@ -22,14 +22,7 @@ class StoreCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ticket_id' => 'nullable',
-            'feature_request_id' => 'nullable',
-            'error_report_id' => 'nullable',
-            'user_id' => 'required|integer',
             'content' => 'required|string',
-            'is_internal' => 'nullable|boolean',
-            'created_at' => 'nullable|timestamp',
-            'updated_at' => 'nullable|timestamp'
         ];
     }
 }

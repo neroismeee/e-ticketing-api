@@ -1,13 +1,17 @@
 <?php
 
 use App\Http\Controllers\Api\v1\ApprovalController;
-use App\Http\Controllers\api\v1\CommentController;
+use App\Http\Controllers\Api\v1\Comment\MentionController;
+use App\Http\Controllers\Api\v1\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\ErrorController;
 use App\Http\Controllers\Api\v1\TicketController;
 use App\Http\Controllers\Api\v1\FeatureController;
-use App\Http\Controllers\api\v1\TIcketConversionController;
+use App\Http\Controllers\Api\v1\TIcketConversionController;
+use App\Http\Controllers\Api\v1\Comment\TicketCommentController;
+use App\Http\Controllers\Api\v1\Comment\FeatureRequestCommentController;
+use App\Http\Controllers\Api\v1\Comment\ErrorReportCommentController;
 
 Route::prefix('v1')->group(function () {
     require __DIR__ . '/auth.php';
@@ -31,8 +35,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/feature-requests/{feature}', [FeatureController::class, 'show'])->name('feature-requests.show');
 
             //comment
-            Route::get('/comments', [CommentController::class, 'index']);
-            Route::get('/comments/{comment}', [CommentController::class, 'show']);
+            Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+            Route::get('/comments/mentions', [MentionController::class, 'index'])->name('mentions.index');
+            Route::get('/comments/{comment}', [CommentController::class, 'show'])->name('comments.show');
         });
 
         Route::middleware('role:it_staff')->group(function () {
@@ -43,7 +48,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/tickets/{ticket}/convert/error-report', [TicketConversionController::class, 'toErrorReport'])
                 ->name('tickets.convert.error-report');
             Route::post('/tickets/{ticket}/convert/feature-request', [TicketConversionController::class, 'toFeatureRequest'])
-                ->name('tickets.convert.error-report');
+                ->name('tickets.convert.feature-request');
 
             //error report routes
             Route::post('/error-reports', [ErrorController::class, 'store'])->name('error-reports.store');
@@ -58,9 +63,9 @@ Route::prefix('v1')->group(function () {
                 ->name('feature-requests.approve');
 
             //comment routes
-            Route::post('/comments', [CommentController::class, 'store']);
-            Route::put('/comments/{comment}', [CommentController::class, 'update']);
-            Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+            Route::apiResource('tickets.comments', TicketCommentController::class)->only(['index', 'store', 'destroy']);
+            Route::apiResource('errors.comments', ErrorReportCommentController::class)->only(['index', 'store', 'destroy']);
+            Route::apiResource('features.comments', FeatureRequestCommentController::class)->only(['index', 'store', 'destroy']);
         });
     });
 });
