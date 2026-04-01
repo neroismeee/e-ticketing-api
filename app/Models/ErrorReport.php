@@ -3,35 +3,38 @@
 namespace App\Models;
 
 use Dom\Comment;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
+#[Fillable([
+    'id',
+    'title',
+    'description',
+    'category',
+    'priority',
+    'status',
+    'reporter_id',
+    'assigned_to_id',
+    'assigned_team',
+    'date_reported',
+    'start_date',
+    'due_date',
+    'completion_date',
+    'estimated_effort',
+    'actual_effort',
+    'sla_time_elapsed',
+    'sla_time_remaining',
+    'sla_breached',
+    'source_ticket_id',
+    'is_direct_input',
+])]
 
 class ErrorReport extends Model
 {
     protected $keyType = 'string';
     public $incrementing = false;
-    protected $fillable = [
-        'id',
-        'title',
-        'description',
-        'category',
-        'priority',
-        'status',
-        'reporter_id',
-        'assigned_to_id',
-        'assigned_team',
-        'date_reported',
-        'start_date',
-        'due_date',
-        'completion_date',
-        'estimated_effort',
-        'actual_effort',
-        'sla_time_elapsed',
-        'sla_time_remaining',
-        'sla_breached',
-        'source_ticket_id',
-        'is_direct_input',
-    ];
-    
+
     public const CATEGORIES = [
         'hardware',
         'network',
@@ -51,7 +54,7 @@ class ErrorReport extends Model
         'completed',
         'overdue',
     ];
-    
+
     public const TEAMS = [
         'programmer',
         'network',
@@ -63,7 +66,7 @@ class ErrorReport extends Model
     {
         return $this->belongsTo(User::class, 'reporter_id');
     }
-    
+
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assigned_to_id');
@@ -74,7 +77,7 @@ class ErrorReport extends Model
         return $this->belongsTo(Ticket::class, 'source_ticket_id');
     }
 
-    public function comments()
+    public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }

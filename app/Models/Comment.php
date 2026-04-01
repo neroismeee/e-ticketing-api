@@ -7,14 +7,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable([
-    'ticket_id',
-    'error_report_id',
-    'feature_request_id',
+    'commentable_id',
+    'commentable_type',
     'user_id',
     'content',
     'is_internal',
-    'created_at',
-    'updated_at'
 ])]
 
 class Comment extends Model

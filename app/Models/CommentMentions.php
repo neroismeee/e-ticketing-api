@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+
+#[Fillable([
+   'comment_id',
+   'user_id' 
+])]
 
 class CommentMentions extends Model
 {
-    protected $fillable = [
-        'comment_id',
-        'user_id'
-    ];
-
     // relations    
     public function comment()
     {

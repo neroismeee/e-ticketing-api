@@ -3,43 +3,46 @@
 namespace App\Models;
 
 use Dom\Comment;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
+#[Fillable([
+    'id',
+    'title',
+    'description',
+    'request_type',
+    'priority',
+    'status',
+    'progress',
+    'reporter_id',
+    'assigned_to_id',
+    'assigned_team',
+    'date_submitted',
+    'approval_date',
+    'assigned_date',
+    'start_date',
+    'due_date',
+    'completion_date',
+    'review_date',
+    'estimated_effort',
+    'actual_effort',
+    'sla_time_elapsed',
+    'sla_time_remaining',
+    'sla_breached',
+    'approved_by',
+    'rejection_reason',
+    'roi_impact',
+    'quality_impact',
+    'post_implementation_notes',
+    'source_ticket_id',
+    'is_direct_input',
+])]
 
 class FeatureRequest extends Model
 {
     protected $keyType = 'string';
     public $incrementing = false;
-    protected $fillable = [
-        'id',
-        'title',
-        'description',
-        'request_type',
-        'priority',
-        'status',
-        'progress',
-        'reporter_id',
-        'assigned_to_id',
-        'assigned_team',
-        'date_submitted',
-        'approval_date',
-        'assigned_date',
-        'start_date',
-        'due_date',
-        'completion_date',
-        'review_date',
-        'estimated_effort',
-        'actual_effort',
-        'sla_time_elapsed',
-        'sla_time_remaining',
-        'sla_breached',
-        'approved_by',
-        'rejection_reason',
-        'roi_impact',
-        'quality_impact',
-        'post_implementation_notes',
-        'source_ticket_id',
-        'is_direct_input',
-    ];
 
     public const REQUEST_TYPES = [
         'feature_request',
@@ -87,14 +90,14 @@ class FeatureRequest extends Model
     public function approver()
     {
         return $this->belongsTo(User::class, 'approved_by');
-    }   
+    }
 
     public function sourceTicket()
     {
         return $this->belongsTo(Ticket::class, 'source_ticket_id');
     }
 
-    public function comments()
+    public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }

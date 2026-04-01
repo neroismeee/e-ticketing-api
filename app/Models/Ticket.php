@@ -2,42 +2,42 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
-use Dom\Comment;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+#[Fillable([
+    'id',
+    'title',
+    'description',
+    'category',
+    'priority',
+    'status',
+    'reporter_id',
+    'assigned_to_id',
+    'assigned_team',
+    'date_reported',
+    'due_date',
+    'resolved_date',
+    'closed_date',
+    'sla_breached',
+    'response_time',
+    'resolution_time',
+    'estimated_effort',
+    'actual_effort',
+    'parent_ticket_id',
+    'converted_to_type',
+    'converted_to_id',
+    'converted_at',
+    'converted_by',
+    'conversion_reason',
+])]
 class Ticket extends Model
 {
     use HasFactory;
     protected $keyType = 'string';
     public $incrementing = false;
-    protected $fillable = [
-        'id',
-        'title',
-        'description',
-        'category',
-        'priority',
-        'status',
-        'reporter_id',
-        'assigned_to_id',
-        'assigned_team',
-        'date_reported',
-        'due_date',
-        'resolved_date',
-        'closed_date',
-        'sla_breached',
-        'response_time',
-        'resolution_time',
-        'estimated_effort',
-        'actual_effort',
-        'parent_ticket_id',
-        'converted_to_type',
-        'converted_to_id',
-        'converted_at',
-        'converted_by',
-        'conversion_reason',
-    ];
 
     protected $casts = [
         'date_reported' => 'datetime',
@@ -85,19 +85,19 @@ class Ticket extends Model
         'network',
         'hardware',
     ];
-    
+
     public const CONVERTED_TO_TYPES = [
         'error_report',
         'feature_request',
     ];
 
     // Relations
-    public function reportedTickets()
+    public function reportedTicket()
     {
         return $this->belongsTo(User::class, 'reporter_id');
     }
 
-    public function assignedTickets()
+    public function assignedTicket()
     {
         return $this->belongsTo(User::class, 'assigned_to_id');
     }
@@ -121,13 +121,13 @@ class Ticket extends Model
     {
         return $this->hasOne(FeatureRequest::class, 'source_ticket_id');
     }
-    
+
     public function errorReport()
     {
         return $this->hasOne(ErrorReport::class, 'source_ticket_id');
     }
 
-    public function comments()
+    public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
@@ -141,9 +141,9 @@ class Ticket extends Model
     public function canBeConverted()
     {
         return in_array($this->status, [
-            'pending_approval', 
-            'assigned', 
-            'in_progress', 
+            'pending_approval',
+            'assigned',
+            'in_progress',
             'waiting_for_user'
         ]);
     }
@@ -152,11 +152,10 @@ class Ticket extends Model
     {
         if (!$this->isConverted()) return null;
 
-        return match($this->converted_to_type) {
+        return match ($this->converted_to_type) {
             'error_report' => route('error-report.show', $this->converted_to_id),
             'feature_request' => route('feature-request.show', $this->converted_to_id),
             'default' => null
         };
     }
-
 }
