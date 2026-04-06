@@ -6,6 +6,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,5 +30,12 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', function () {
             return Limit::perMinute(60);
         });
+
+        Relation::morphMap([
+            'ticket' => \App\Models\Ticket::class,
+            'error_report' => \App\Models\ErrorReport::class,
+            'feature_request' => \App\Models\FeatureRequest::class,
+
+        ]);
     }
 }
