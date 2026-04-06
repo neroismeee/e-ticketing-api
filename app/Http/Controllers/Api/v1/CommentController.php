@@ -19,9 +19,7 @@ class CommentController extends Controller
     public function index(): JsonResponse
     {
         $comment = Comment::with([
-            'ticket',
-            'feature_request',
-            'error_report',
+            'commentable',
             'user',
         ])->latest()
           ->paginate(10);
@@ -54,9 +52,8 @@ class CommentController extends Controller
     public function show(Comment $comment): JsonResponse
     {
         $comment->load([
-            'ticket',
-            'feature_request',
-            'error_report',
+            'commentable_id',
+            'commentable_type',
             'user',
         ]);
 

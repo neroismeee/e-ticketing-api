@@ -34,10 +34,10 @@ Route::prefix('v1')->group(function () {
             Route::get('/feature-requests', [FeatureController::class, 'index'])->name('feature-requests.index');
             Route::get('/feature-requests/{feature}', [FeatureController::class, 'show'])->name('feature-requests.show');
 
-            //comment
-            Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
-            Route::get('/comments/mentions', [MentionController::class, 'index'])->name('mentions.index');
-            Route::get('/comments/{comment}', [CommentController::class, 'show'])->name('comments.show');
+            //comment routes
+            Route::apiResource('tickets.comments', TicketCommentController::class)->only(['index', 'store', 'destroy']);
+            Route::apiResource('errors.comments', ErrorReportCommentController::class)->only(['index', 'store', 'destroy']);
+            Route::apiResource('features.comments', FeatureRequestCommentController::class)->only(['index', 'store', 'destroy']);
         });
 
         Route::middleware('role:it_staff')->group(function () {
@@ -62,10 +62,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/feature-requests/{feature}/approve', [ApprovalController::class, 'approveFeatureRequest'])
                 ->name('feature-requests.approve');
 
-            //comment routes
-            Route::apiResource('tickets.comments', TicketCommentController::class)->only(['index', 'store', 'destroy']);
-            Route::apiResource('errors.comments', ErrorReportCommentController::class)->only(['index', 'store', 'destroy']);
-            Route::apiResource('features.comments', FeatureRequestCommentController::class)->only(['index', 'store', 'destroy']);
+            
         });
     });
 });

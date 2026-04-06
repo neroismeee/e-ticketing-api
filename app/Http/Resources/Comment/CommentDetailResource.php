@@ -16,9 +16,8 @@ class CommentDetailResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'ticket_id' => $this->ticket_id,
-            'error_report_id' => $this->error_report_id,
-            'feature_request_id' => $this->feature_request_id,
+            'commentable_id' => $this->commentable_id,
+            'commentable_type' => $this->commentable_type,
             'user_id' => $this->user_id,
             'content' => $this->content,
             'is_internal' => $this->is_internal,
