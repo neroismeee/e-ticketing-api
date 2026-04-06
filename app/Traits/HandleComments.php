@@ -7,6 +7,7 @@ use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Http\Resources\Comment\CommentResource;
 use App\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,7 +36,9 @@ trait HandleComments
 
     public function destroyComment(Model $parent, Comment $comment): JsonResponse
     {
-        if ($comment->commentable_id !== $parent->getKey() || $comment->commentable_type !== get_class($parent)) {
+        $morphAlias = Relation::getMorphAlias(get_class($parent));
+
+        if ($comment->commentable_id !== $parent->getKey() || $comment->commentable_type !== $morphAlias) {
             abort(403, 'This comment is not owned by that resource');
         }
 
@@ -47,12 +50,15 @@ trait HandleComments
         );
     }
 
+    // Helpers
     private function resolveIsInternal(StoreCommentRequest $request): bool
     {
-        if (auth()->user()->role === 'it_staff') {
+        $user = $request->user();
+
+        if ($user && $user->isItStaff()) {
             return true;
         }
 
-        return $request->boolean('is_internal', false);
+        return $request->boolean('is_internal');
     }
 }

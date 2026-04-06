@@ -51,6 +51,12 @@ class User extends Authenticatable
         ];
     }
 
+    // Helpers
+    public function isItStaff(): bool
+    {
+        return $this->role === 'it_staff';
+    }
+
     public const ROLES = [
         'admin',
         'team_lead',
