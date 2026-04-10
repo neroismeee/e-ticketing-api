@@ -3,8 +3,6 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -35,7 +33,7 @@ class ConversionFailedException extends Exception
     /**
      * Render the exception as an HTTP response.
      */
-    public function render(Request $request): JsonResponse
+    public function render(): JsonResponse
     {
         return response()->json([
             'success' => false,

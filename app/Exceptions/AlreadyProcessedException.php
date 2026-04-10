@@ -17,7 +17,7 @@ class AlreadyProcessedException extends Exception
         );  
     }
 
-    public function render(Request $request): JsonResponse {
+    public function render(): JsonResponse {
         return response()->json([
             'success' => false,
             'message' => $this->getMessage(),

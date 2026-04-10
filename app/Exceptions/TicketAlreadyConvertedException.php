@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Illuminate\Support\Carbon;
 
@@ -25,7 +24,7 @@ class TicketAlreadyConvertedException extends Exception
     /**
      * Render the exception as an HTTP response.
      */
-    public function render(Request $request): JsonResponse 
+    public function render(): JsonResponse 
     {
         return response()->json([
             'success' => false,

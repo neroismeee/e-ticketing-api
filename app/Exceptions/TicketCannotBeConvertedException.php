@@ -3,9 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Throwable;
 
 class TicketCannotBeConvertedException extends Exception
 {
