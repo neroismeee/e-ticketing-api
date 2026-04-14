@@ -65,19 +65,6 @@ class CommentController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCommentRequest $request, Comment $comment): JsonResponse
-    {
-        $comment->update($request->validated());
-
-        return ApiResponse::success(
-            new CommentDetailResource($comment),
-            'Comment updated successfully',
-        );
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Comment $comment): JsonResponse
