@@ -6,18 +6,30 @@ use App\Helpers\ApiResponse;
 use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Http\Resources\Comment\CommentResource;
 use App\Models\Comment;
+use App\Models\User;
+use App\Services\Comment\MentionService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 trait HandleComments
 {
     public function indexComment(Model $parent)
     {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        $withInternal = $user && $user->isItStaff();
+
         $comments = $parent->comments()
-            ->with('user')
-            ->latest()
+            ->with([
+                'user:id,name',
+                'mentions.mentionedUser:id,name'
+            ])
+            ->when(! $withInternal, fn($q) => $q->where('is_internal', false))
+            ->latest('created_at')
             ->paginate(10);
 
         return CommentResource::collection($comments);
@@ -25,13 +37,30 @@ trait HandleComments
 
     public function storeComment(StoreCommentRequest $request, Model $parent)
     {
-        $comment = $parent->comments()->create([
-            ...$request->validated(),
-            'user_id' => Auth::id(),
-            'is_internal' => $this->resolveIsInternal($request),
-        ]);
+        $mentionService = app(MentionService::class);
 
-        return new CommentResource($comment->load('user'));
+        $mentionedUsers = $mentionService->resolve(
+            content: $request->validated('content'),
+            authorId: Auth::id()
+        );
+
+        $comment = DB::transaction(
+            function () use ($request, $parent, $mentionService, $mentionedUsers) {
+                $comment = $parent->comments()->create([
+                    ...$request->validated(),
+                    'user_id' => Auth::id(),
+                    'is_internal' => $this->resolveIsInternal($request)
+                ]);
+
+                $mentionService->persist($comment->id, $mentionedUsers);
+
+                return $comment;
+            }
+        );
+
+        return new CommentResource(
+            $comment->load(['user', 'mentions.mentionedUsers'])
+        );
     }
 
     public function destroyComment(Model $parent, Comment $comment): JsonResponse
@@ -39,7 +68,7 @@ trait HandleComments
         $morphAlias = Relation::getMorphAlias(get_class($parent));
 
         if ($comment->commentable_id !== $parent->getKey() || $comment->commentable_type !== $morphAlias) {
-            abort(403, 'This comment is not owned by that resource');
+            abort(403, 'This comment does not belong to that resource');
         }
 
         $comment->delete();
