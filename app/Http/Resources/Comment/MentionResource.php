@@ -17,7 +17,10 @@ class MentionResource extends JsonResource
         return [
             'id' => $this->id,
             'comment_id' => $this->comment_id,
-            'user_id' => $this->user_id
+            'user' => $this->mentionedUser ? [
+                'id' => $this->mentionedUser->id,
+                'name' => $this->mentionedUser->name,
+            ] : null,
         ];
     }
 }
