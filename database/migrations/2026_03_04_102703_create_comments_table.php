@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('commentable_id');
             $table->string('commentable_type');
             $table->foreignId('user_id')
-                ->nullable()
                 ->constrained()
                 ->onUpdate('cascade')
                 ->nullOnDelete();
