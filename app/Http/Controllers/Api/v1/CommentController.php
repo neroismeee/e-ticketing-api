@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\v1;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Comment\StoreCommentRequest;
-use App\Http\Requests\Comment\UpdateCommentRequest;
 use App\Http\Resources\Comment\CommentResource;
 use App\Http\Resources\Comment\CommentDetailResource;
 use App\Models\Comment;

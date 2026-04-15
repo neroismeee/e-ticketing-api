@@ -8,7 +8,6 @@ use App\Http\Resources\Comment\MentionResource;
 use App\Models\Comment;
 use App\Services\Comment\MentionService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class MentionController extends Controller
 {
