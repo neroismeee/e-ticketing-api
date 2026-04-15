@@ -17,10 +17,13 @@ class MentionResource extends JsonResource
         return [
             'id' => $this->id,
             'comment_id' => $this->comment_id,
-            'user' => $this->mentionedUser ? [
-                'id' => $this->mentionedUser->id,
-                'name' => $this->mentionedUser->name,
-            ] : null,
+            'user' => $this->whenLoaded('mentionedUser', function () {
+                return [
+                    'id' => $this->mentionedUser->id,
+                    'username' => $this->mentionedUser->username,
+                    'name' => $this->mentionedUser->name,
+                ];
+            })
         ];
     }
 }
