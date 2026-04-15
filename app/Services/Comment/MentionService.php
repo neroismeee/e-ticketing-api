@@ -6,7 +6,6 @@ use App\Exceptions\MentionLimitExceededException;
 use App\Models\Comment;
 use App\Models\CommentMention;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -14,7 +13,7 @@ use Illuminate\Support\Collection;
 class MentionService
 {
     private const max_mentions_per_comment = 10;
-    private const mention_pattern = '/@([a-zA-Z0-9_]{1-50})/';
+    private const mention_pattern = '/@([a-zA-Z0-9_.-]{1,50})/';
 
     public function resolve(string $content, int $authorId): Collection
     {
@@ -25,17 +24,15 @@ class MentionService
         return $this->fetchValidUsers($usernames, $authorId);
     }
 
-    public function persist(int $commentId, Collection $mentionedUsers)
+    public function persist(int $commentId, Collection $mentionedUser)
     {
-        if ($mentionedUsers->isEmpty()) {
+        if ($mentionedUser->isEmpty()) {
             return;
         }
 
-        $rows = $mentionedUsers->map(fn(User $user) => [
+        $rows = $mentionedUser->map(fn(User $user) => [
             'comment_id' => $commentId,
             'user_id' => $user->id,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
         ])->toArray();
 
         CommentMention::insert($rows);
@@ -64,7 +61,7 @@ class MentionService
     // helper
     private function extractUsernames(string $content): array
     {
-        preg_match_all(self::mention_pattern, $content, $pattern);
+        preg_match_all(self::mention_pattern, $content, $matches);
 
         return array_values(
             array_unique(
@@ -92,6 +89,6 @@ class MentionService
         return User::whereIn('username', $usernames)
             ->where('id', '!=', $authorId)
             ->where('is_active', true)
-            ->get('id', 'username', 'name');
+            ->get(['id', 'username', 'name']);
     }
 }

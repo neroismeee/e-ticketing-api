@@ -25,8 +25,8 @@ trait HandleComments
 
         $comments = $parent->comments()
             ->with([
-                'user:id,name',
-                'mentions.mentionedUser:id,name'
+                'user:id,name,username',
+                'mentions.mentionedUser:id,name,username'
             ])
             ->when(! $withInternal, fn($q) => $q->where('is_internal', false))
             ->latest('created_at')
@@ -39,27 +39,27 @@ trait HandleComments
     {
         $mentionService = app(MentionService::class);
 
-        $mentionedUsers = $mentionService->resolve(
+        $mentionedUser = $mentionService->resolve(
             content: $request->validated('content'),
             authorId: Auth::id()
         );
 
         $comment = DB::transaction(
-            function () use ($request, $parent, $mentionService, $mentionedUsers) {
+            function () use ($request, $parent, $mentionService, $mentionedUser) {
                 $comment = $parent->comments()->create([
                     ...$request->validated(),
                     'user_id' => Auth::id(),
                     'is_internal' => $this->resolveIsInternal($request)
                 ]);
 
-                $mentionService->persist($comment->id, $mentionedUsers);
+                $mentionService->persist($comment->id, $mentionedUser);
 
                 return $comment;
             }
         );
 
         return new CommentResource(
-            $comment->load(['user', 'mentions.mentionedUsers'])
+            $comment->load(['user', 'mentions.mentionedUser'])
         );
     }
 
