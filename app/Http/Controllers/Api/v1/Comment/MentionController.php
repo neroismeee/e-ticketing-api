@@ -8,6 +8,8 @@ use App\Http\Resources\Comment\MentionResource;
 use App\Models\Comment;
 use App\Services\Comment\MentionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MentionController extends Controller
 {
@@ -28,8 +30,16 @@ class MentionController extends Controller
         );
     }
 
-    public function mine()
+    public function mine(Request $request): JsonResponse
     {
+        $mentions = $this->mentionService->getForUser(
+            userId: Auth::id(),
+            perPage: $request->integer('per_page', 15)
+        );
 
+        return ApiResponse::success(
+            MentionResource::collection($mentions),
+            'My Mentions Retrieved Successfully'
+        );
     }
 }
