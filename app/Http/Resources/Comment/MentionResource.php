@@ -23,6 +23,14 @@ class MentionResource extends JsonResource
                     'username' => $this->mentionedUser->username,
                     'name' => $this->mentionedUser->name,
                 ];
+            }),
+            'comment' => $this->whenLoaded('comment', function () {
+                return [
+                    'commentable_id' => $this->comment->commentable_id,
+                    'commentable_type' => $this->comment->commentable_type,
+                    'content' => $this->comment->content,
+                    'created_at' => $this->comment->created_at->format('Y-m-d H:i:s')
+                ];
             })
         ];
     }
