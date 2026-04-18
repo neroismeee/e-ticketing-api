@@ -6,7 +6,6 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Http\Resources\Comment\CommentResource;
-use App\Http\Resources\Comment\CommentDetailResource;
 use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
 
@@ -39,7 +38,7 @@ class CommentController extends Controller
         $comment = Comment::create($request->validated());
         
         return ApiResponse::success(
-            new CommentDetailResource($comment),
+            new CommentResource($comment),
             'Comment created successfully',
             201
         );
@@ -57,7 +56,7 @@ class CommentController extends Controller
         ]);
 
         return ApiResponse::success(
-            new CommentDetailResource($comment),
+            new CommentResource($comment),
             'Comment retrieved successfully'
         );
 
