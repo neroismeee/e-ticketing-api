@@ -38,6 +38,10 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('tickets.comments', TicketCommentController::class)->only(['index', 'store', 'destroy']);
             Route::apiResource('errors.comments', ErrorReportCommentController::class)->only(['index', 'store', 'destroy']);
             Route::apiResource('features.comments', FeatureRequestCommentController::class)->only(['index', 'store', 'destroy']);
+
+            //mentions routes
+            Route::get('/comments/{comment}/mentions', [MentionController::class, 'index'])->name('comment-mentions.index');
+            Route::get('/mentions/me', [MentionController::class, 'mine'])->name('comment-mentions.me');
         });
 
         Route::middleware('role:it_staff')->group(function () {
