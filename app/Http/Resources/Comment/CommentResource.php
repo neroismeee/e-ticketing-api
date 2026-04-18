@@ -18,7 +18,7 @@ class CommentResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'content' => $this->content,
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'mentions' => MentionResource::collection(
                 $this->whenLoaded('mentions')
             ),
