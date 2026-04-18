@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Comment;
+use App\Models\ErrorReport;
+use App\Models\FeatureRequest;
+use App\Models\Ticket;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -32,10 +36,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Relation::morphMap([
-            'ticket' => \App\Models\Ticket::class,
-            'error_report' => \App\Models\ErrorReport::class,
-            'feature_request' => \App\Models\FeatureRequest::class,
-
+            'ticket' => Ticket::class,
+            'error_report' => ErrorReport::class,
+            'feature_request' => FeatureRequest::class,
+            'comment' => Comment::class
         ]);
     }
 }
