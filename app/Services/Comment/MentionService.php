@@ -49,10 +49,10 @@ class MentionService
             ->with(
                 [
                     'comment:id,commentable_id,commentable_type,user_id,content,is_internal,created_at',
-                    'comment.author:id,name,username',
+                    'comment.user:id,name,username',
                     'comment.commentable'
                 ]
-            )->latest()
+            )->latest('id')
             ->paginate(min($perPage, 50));
     }
 
