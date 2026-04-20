@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\HandleAttachments;
+use App\Traits\HandleComments;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -31,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ErrorReport extends Model
 {
+    use HandleComments, HandleAttachments;
     protected $keyType = 'string';
     public $incrementing = false;
 

@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
+use App\Traits\HasAttachments;
+use App\Traits\HasComments;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -35,7 +36,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 ])]
 class Ticket extends Model
 {
-    use HasFactory;
+    use HasComments, HasAttachments;
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -130,6 +131,11 @@ class Ticket extends Model
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function notification()
+    {
+        return $this->hasMany(Notification::class, 'ticket_id');
     }
 
     // helpers

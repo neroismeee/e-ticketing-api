@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Controllers\api\v1\Comment\MentionController;
+use App\Traits\HandleAttachments;
+use App\Traits\HandleComments;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 class Comment extends Model
 {
+    use HandleComments, HandleAttachments;
     // helpers
     public function scopePublic($query)
     {
