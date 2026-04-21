@@ -15,17 +15,18 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->bigInteger('size');
-            $table->string('type');
-            $table->string('url');
-            $table->string('attachmentable_id');
-            $table->string('attachmentable_type');
+            $table->string('type', 100);
+            $table->string('url', 500);  
+            $table->string('attachable_id');
+            $table->string('attachable_type');
             $table->foreignId('uploaded_by')
+                ->nullable()
                 ->constrained('users')
                 ->onUpdate('cascade')
                 ->nullOnDelete();
             $table->timestamp('uploaded_at')->useCurrent();
 
-            $table->index(['attachmentable_id', 'attachmentable_type']);
+            $table->index(['attachable_id', 'attachable_type']);
             $table->index('uploaded_by');
         });
     }
