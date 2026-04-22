@@ -3,8 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 
+use function Symfony\Component\Clock\now;
+
+#[WithoutTimestamps]
 #[Fillable([
     'name',
     'size',
@@ -19,6 +23,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attachment extends Model
 {
+    protected $casts = [
+        'size' => 'integer',
+        'uploaded_at' => 'datetime', 
+    ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (self $model) {
+            if (empty($model->uploaded_at)) {
+                $model->uploaded_at =   now();
+            }
+        }); 
+    }
+
     // Relations
     public function attachable()
     {
