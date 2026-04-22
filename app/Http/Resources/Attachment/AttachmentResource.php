@@ -4,7 +4,6 @@ namespace App\Http\Resources\Attachment;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
 
 class AttachmentResource extends JsonResource
 {
@@ -21,9 +20,15 @@ class AttachmentResource extends JsonResource
             'size' => $this->size,
             'type' => $this->type,
             'url' => $this->url,
-            'commentable_id' => $this->commentable_id,
-            'commentable_type' => $this->commentable_type,
-            'uploaded_by' => $this->uploaded_by,
+            'attachable' => [
+                'type' => $this->attachable_type,
+                'id' => $this->attachable_id
+            ],
+            'uploader' => $this->uploader ? [
+                'id' => $this->uploader->id,
+                'name' => $this->uploader->name,
+                'username' => $this->uploader->username,
+            ]: null,
             'uploaded_at' => $this->uploaded_at->format('Y-m-d H:i:s'),
         ];
     }
