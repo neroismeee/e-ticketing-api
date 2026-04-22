@@ -14,12 +14,9 @@ class TicketAttachmentController extends Controller
 {
     use HandleAttachments;
 
-    protected AttachmentService $attachmentService;
-
-    public function __construct(AttachmentService $attachmentService)
-    {
-        $this->attachmentService = $attachmentService;
-    }
+    public function __construct(
+        protected AttachmentService $attachmentService
+    ) {}
 
     protected function getAttachmentService(): AttachmentService
     {
