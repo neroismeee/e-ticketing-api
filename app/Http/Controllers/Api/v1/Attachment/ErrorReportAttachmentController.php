@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Attachment;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Attachment\StoreAttachmentRequest;
 use App\Models\Attachment;
 use App\Models\ErrorReport;
 use App\Services\Attachment\AttachmentService;
@@ -27,7 +28,7 @@ class ErrorReportAttachmentController extends Controller
         return $this->indexAttachments($request, $error);
     }
 
-    public function store(Request $request, ErrorReport $error)
+    public function store(StoreAttachmentRequest $request, ErrorReport $error)
     {
         return $this->storeAttachments($request, $error);
     }

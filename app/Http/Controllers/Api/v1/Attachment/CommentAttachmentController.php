@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Attachment;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Attachment\StoreAttachmentRequest;
 use App\Models\Attachment;
 use App\Models\Comment;
 use App\Services\Attachment\AttachmentService;
@@ -28,7 +29,7 @@ class CommentAttachmentController extends Controller
         return $this->indexAttachments($request, $comment);
     }
 
-    public function store(Request $request, Comment $comment): JsonResponse
+    public function store(StoreAttachmentRequest $request, Comment $comment): JsonResponse
     {
         return $this->storeAttachments($request, $comment);
     }
