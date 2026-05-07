@@ -18,7 +18,7 @@ class ErrorReportAttachmentController extends Controller
         protected AttachmentService $attachmentService
     ) {}
 
-    private function getAttachmentService(): AttachmentService
+    protected function getAttachmentService(): AttachmentService
     {
         return $this->attachmentService;
     }
