@@ -28,10 +28,11 @@ trait HandleStatusHistory
         );
     }
 
-    public function updateStatus(UpdateStatusHistoryRequest $request, Model $resource)
+    public function updateStatus(UpdateStatusHistoryRequest $request, Model $resource): JsonResponse
     {
         $statusHistory = $this->getStatusHistoryService()->update(
             resource: $resource,
+            previousStatus: $resource->status,
             newStatus: $request->validated('status'),
             extra: [
                 'reason' => $request->validated('reason'),
