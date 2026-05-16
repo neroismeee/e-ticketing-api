@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Ticket;
 
+use App\Enums\AssignedTeam;
+use App\Enums\Priorities;
+use App\Enums\TicketCategory;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Ticket;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class StoreTicketRequest extends FormRequest
 {
@@ -35,10 +36,10 @@ class StoreTicketRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'category' => 'required|string|in:' . implode(',', Ticket::CATEGORIES),
-            'priority' => 'required|string|in:' . implode(',', Ticket::PRIORITIES),
+            'category' => ['required', 'string', Rule::in(TicketCategory::values())],  
+            'priority' => ['required', 'string', Rule::in(Priorities::values())], 
             'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => 'nullable|string|max:255|in:' . implode(',', Ticket::ASSIGNED_TEAMS),
+            'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
             'due_date' => 'nullable|date',
             'response_time' => 'nullable|numeric|decimal:0,2',
             'resolution_time' => 'nullable|numeric|decimal:0,2',

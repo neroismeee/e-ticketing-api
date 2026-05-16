@@ -2,9 +2,14 @@
 
 namespace App\Http\Requests\Ticket;
 
+use App\Enums\AssignedTeam;
+use App\Enums\ConversionTypes;
+use App\Enums\Priorities;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Ticket;
-
+use Illuminate\Validation\Rule;
+use App\Enums\TicketCategory;
+use App\Enums\TicketStatus;
 
 class UpdateTicketRequest extends FormRequest
 {
@@ -26,12 +31,12 @@ class UpdateTicketRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
-            'category' => 'sometimes|string|in:' . implode(',', Ticket::CATEGORIES),
-            'priority' => 'sometimes|string|in:' . implode(',', Ticket::PRIORITIES),
-            'status' => 'sometimes|string|in:' . implode(',', Ticket::STATUSES),
+            'category' => ['required', 'string', Rule::in(TicketCategory::values())],  
+            'priority' => ['required', 'string', Rule::in(Priorities::values())],  
+            'status' => ['required', 'string', Rule::in(TicketStatus::values())],  
             'reporter_id' => 'sometimes|integer|exists:users,id',
             'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => 'nullable|string|max:255|in:' . implode(',', Ticket::ASSIGNED_TEAMS),
+            'assigned_team' => ['required', 'string', Rule::in(AssignedTeam::values())],  
             'date_reported' => 'sometimes|date',
             'due_date' => 'nullable|date',
             'resolved_date' => 'nullable|date',
@@ -42,7 +47,7 @@ class UpdateTicketRequest extends FormRequest
             'estimated_effort' => 'nullable|numeric|decimal:0,2',
             'actual_effort' => 'nullable|numeric|decimal:0,2',
             'parent_ticket_id' => 'nullable|integer|exists:tickets,id',
-            'converted_to_type' => 'nullable|string|in:' . implode(',', Ticket::CONVERTED_TO_TYPES),
+            'converted_to_type' => ['required', 'string', Rule::in(ConversionTypes::values())],  
             'converted_to_id' => 'nullable|integer',
             'converted_at' => 'nullable|date',
             'conversion_reason' => 'nullable|string|max:255',
