@@ -7,6 +7,7 @@ use App\Http\Requests\StatusHistory\UpdateStatusHistoryRequest;
 use App\Http\Resources\StatusHistoryResource;
 use App\Services\StatusHistoryService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -28,11 +29,10 @@ trait HandleStatusHistory
         );
     }
 
-    public function updateStatus(UpdateStatusHistoryRequest $request, Model $resource): JsonResponse
+    public function updateStatus(FormRequest $request, Model $resource): JsonResponse
     {
         $statusHistory = $this->getStatusHistoryService()->update(
             resource: $resource,
-            previousStatus: $resource->status,
             newStatus: $request->validated('status'),
             extra: [
                 'reason' => $request->validated('reason'),

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,8 @@ use function Symfony\Component\Clock\now;
 
 class StatusHistory extends Model
 {
+    use HasActivityLog;
+    
     protected static function boot()
     {
         parent::boot();
@@ -32,6 +35,7 @@ class StatusHistory extends Model
             }
         });
     }
+
     // Relation
     public function statusable()
     {
