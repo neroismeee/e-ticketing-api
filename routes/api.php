@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\ApprovalController;
+use App\Http\Controllers\Api\v1\Assignment\TicketAssignmentController;
 use App\Http\Controllers\Api\v1\Attachment\CommentAttachmentController;
 use App\Http\Controllers\Api\v1\Attachment\ErrorReportAttachmentController;
 use App\Http\Controllers\Api\v1\Attachment\FeatureRequestAttachmentController;
@@ -22,7 +23,7 @@ use App\Http\Controllers\Api\v1\StatusHistory\TicketStatusHistoryController;
 Route::prefix('v1')->group(function () {
     require __DIR__ . '/auth.php';
 
-    Route::middleware('auth:sanctum', 'throttle:api')->group(function () {
+    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/user', function (Request $request) {
             return $request->user();
         });
@@ -87,6 +88,12 @@ Route::prefix('v1')->group(function () {
             Route::patch('/tickets/{ticket}/status', [TicketStatusHistoryController::class, 'update']);
             Route::patch('/features/{feature}/status', [FeatureRequestStatusHistoryController::class, 'update']);
             Route::patch('/errors/{error}/status', [ErrorReportStatusHistoryController::class, 'update']);
+
+            //assignment routes
+            Route::post('/tickets/{ticket}/assign/user', [TicketAssignmentController::class, 'assignUser']);
+            Route::post('/tickets/{ticket}/assign/team', [TicketAssignmentController::class, 'assignTeam']);
+            Route::post('/tickets/{ticket}/unassign/user', [TicketAssignmentController::class, 'unassignUser']);
+            Route::post('/tickets/{ticket}/unassign/team', [TicketAssignmentController::class, 'unassignTeam']);
         });
     });
 });
