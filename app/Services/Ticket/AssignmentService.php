@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Enums\AssignedTeam;
 use App\Enums\TicketStatus;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 class AssignmentService
 {
@@ -22,6 +23,15 @@ class AssignmentService
         $this->guardNotAssignable($resource);
 
         $user = User::findOrFail($userId);
+        $currentUserId = $resource->assigned_to_id;
+
+        if ($currentUserId === $user->id) {
+            throw ValidationException::withMessages([
+                'user_id' => [
+                    "Resource is already assigned to user '{$user->name}'."
+                ]
+            ]);
+        }
         $previousAssignee = $resource->assignedUser?->name;
         $previousStatus = $resource->status instanceof \BackedEnum
             ? $resource->status->value
@@ -63,6 +73,19 @@ class AssignmentService
 
     public function assignToTeam(Model $resource, string $team): Model
     {
+        $assignedTeam = AssignedTeam::from($team);
+        $currentTeam = $resource->assigned_team instanceof AssignedTeam
+            ? $resource->assigned_team->value
+            : $resource->assigned_team;
+
+        if ($currentTeam === $assignedTeam->value) {
+            throw ValidationException::withMessages([
+                'team' => [
+                    "Resource is already assigned to team '{$assignedTeam->label()}'"
+                ]
+            ]);
+        }
+
         $this->guardNotAssignable($resource);
 
         $assignedTeam = AssignedTeam::from($team);
@@ -79,9 +102,9 @@ class AssignmentService
                 'status' => $this->resolveStatusAfterAssignment($resource)
             ]);
 
-            $description = $previousTeam 
-            ? "Reassign from team '{$previousTeam}' to '{$assignedTeam->label()}'."
-            : "Assigned to team '{$assignedTeam->value}'.";
+            $description = $previousTeam
+                ? "Reassign from team '{$previousTeam}' to '{$assignedTeam->label()}'."
+                : "Assigned to team '{$assignedTeam->value}'.";
 
             $this->logService->log(
                 loggable: $resource,
@@ -93,7 +116,7 @@ class AssignmentService
                     'previous_team' => $previousTeam,
                 ])
             );
-            
+
             // log status if status changed
             if ($previousStatus !== $resource->status->value) {
                 $this->logService->logStatusChanged(
