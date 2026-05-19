@@ -2,8 +2,12 @@
 
 namespace App\Http\Requests\FeatureRequest;
 
+use App\Enums\AssignedTeam;
+use App\Enums\Priorities;
+use App\Enums\RequestType;
+use App\Enums\TicketStatus;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\FeatureRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateFeatureRequest extends FormRequest
 {
@@ -25,13 +29,13 @@ class UpdateFeatureRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
-            'request_type' => 'sometimes|string|in:' . implode(',', FeatureRequest::REQUEST_TYPES),
-            'priority' => 'sometimes|string|in:' . implode(',', FeatureRequest::PRIORITIES),
-            'status' => 'sometimes|string|in:' . implode(',', FeatureRequest::STATUSES),
+            'request_type' => ['sometimes', 'string', Rule::in(RequestType::values())],
+            'priority' => ['sometimes', 'string', Rule::in(Priorities::values())],
+            'status' => ['sometimes', 'string', Rule::in(TicketStatus::values())],
             'progress' => 'sometimes|integer|min:0|max:100',
             'reporter_id' => 'sometimes|integer|exists:users,id',
             'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => 'nullable|string|max:255|in:' . implode(',', FeatureRequest::TEAMS),
+            'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
             'date_submitted' => 'sometimes|date',
             'approval_date' => 'nullable|date',
             'assignment_date' => 'nullable|date',

@@ -2,8 +2,12 @@
 
 namespace App\Http\Requests\ErrorReport;
 
+use App\Enums\AssignedTeam;
+use App\Enums\Priorities;
+use App\Enums\TicketCategory;
+use App\Enums\TicketStatus;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\ErrorReport;
+use Illuminate\Validation\Rule;
 
 class UpdateErrorReportRequest extends FormRequest
 {
@@ -25,12 +29,12 @@ class UpdateErrorReportRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
-            'category' => 'sometimes|string|in:' . implode(',', ErrorReport::CATEGORIES),
-            'priority' => 'sometimes|string|in:' . implode(',', ErrorReport::PRIORITIES),
-            'status' => 'sometimes|string|in:' . implode(',', ErrorReport::STATUSES),
+            'category' => ['sometimes', 'string', Rule::in(TicketCategory::values())],
+            'priority' => ['sometimes', 'string', Rule::in(Priorities::values())],
+            'status' => ['sometimes', 'string', Rule::in(TicketStatus::values())],
             'reporter_id' => 'sometimes|integer|exists:users,id',
             'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => 'nullable|string|max:255|in:' . implode(',', ErrorReport::TEAMS),
+            'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
             'date_reported' => 'sometimes|date',
             'start_date' => 'nullable|date',
             'due_date' => 'nullable|date',

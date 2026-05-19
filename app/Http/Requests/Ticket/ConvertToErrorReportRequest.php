@@ -2,9 +2,14 @@
 
 namespace App\Http\Requests\Ticket;
 
+use App\Enums\AssignedTeam;
+use App\Enums\Priorities;
+use App\Enums\TicketCategory;
+use App\Enums\TicketStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\ErrorReport;
 use App\Models\Ticket;
+use Illuminate\Validation\Rule;
 
 class ConvertToErrorReportRequest extends FormRequest
 {
@@ -39,13 +44,13 @@ class ConvertToErrorReportRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'category' => 'required|string|in:' . implode(',', ErrorReport::CATEGORIES),
-            'priority' => 'required|string|in:' . implode(',', ErrorReport::PRIORITIES),
-            'status' => 'required|string|in:' . implode(',', ErrorReport::STATUSES),
+            'category' => ['required', 'string', Rule::in(TicketCategory::values())],
+            'priority' => ['required', 'string', Rule::in(Priorities::values())],
+            'status' => ['required', 'string', Rule::in(TicketStatus::values())],
             'progress' => 'required|integer|min:0|max:100',
             'reporter_id' => 'required|integer|exists:users,id',
             'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => 'nullable|string|max:255|in:' . implode(',', ErrorReport::TEAMS),
+            'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
             'date_reported' => 'required|date',
             'start_date' => 'nullable|date',
             'due_date' => 'nullable|date',

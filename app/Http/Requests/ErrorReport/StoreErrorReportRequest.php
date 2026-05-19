@@ -2,11 +2,16 @@
 
 namespace App\Http\Requests\ErrorReport;
 
+use App\Enums\AssignedTeam;
+use App\Enums\ErrorCategory;
+use App\Enums\Priorities;
+use App\Enums\TicketCategory;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\ErrorReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class StoreErrorReportRequest extends FormRequest
 {
@@ -36,10 +41,10 @@ class StoreErrorReportRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'category' => 'required|string|in:' . implode(',', ErrorReport::CATEGORIES),
-            'priority' => 'required|string|in:' . implode(',', ErrorReport::PRIORITIES),
+            'category' => ['required', 'string', Rule::in(ErrorCategory::values())],
+            'priority' => ['required', 'string', Rule::in(Priorities::values())],
             'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => 'nullable|string|max:255|in:' . implode(',', ErrorReport::TEAMS),
+            'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
             'start_date' => 'nullable|date',
             'due_date' => 'nullable|date',
             'estimated_effort' => 'nullable|numeric|decimal:0,2',

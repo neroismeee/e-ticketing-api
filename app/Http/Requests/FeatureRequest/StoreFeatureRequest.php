@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\FeatureRequest;
 
+use App\Enums\AssignedTeam;
+use App\Enums\Priorities;
+use App\Enums\RequestType;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\FeatureRequest;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class StoreFeatureRequest extends FormRequest
 {
@@ -36,10 +37,10 @@ class StoreFeatureRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'request_type' => 'required|string|in:' . implode(',', FeatureRequest::REQUEST_TYPES),
-            'priority' => 'required|string|in:' . implode(',', FeatureRequest::PRIORITIES),
+            'request_type' => ['required', 'string', Rule::in(RequestType::values())],
+            'priority' => ['required', 'string', Rule::in(Priorities::values())],
             'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => 'nullable|string|max:255|in:' . implode(',', FeatureRequest::TEAMS),
+            'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
             'assignment_date' => 'nullable|date',
             'start_date' => 'nullable|date',
             'due_date' => 'nullable|date',
