@@ -2,51 +2,55 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Exceptions\AlreadyProcessedException;
-use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FeatureRequest\FeatureApprovalRequest;
-use App\Services\Ticket\FeatureApprovalService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use App\Http\Resources\FeatureRequest\ApprovalResource;
+use App\Http\Requests\RejectRequest;
+use App\Models\ErrorReport;
+use App\Models\FeatureRequest;
+use App\Models\Ticket;
+use App\Services\ApprovalService;
+use App\Traits\HandleApproval;
 use Illuminate\Http\JsonResponse;
 
 class ApprovalController extends Controller
 {
-    public function __construct(private FeatureApprovalService $service) {}
+    use HandleApproval;
 
-    public function approveFeatureRequest(
-        FeatureApprovalRequest $request,
-        string $id
-    ): JsonResponse
+    public function __construct(
+        protected ApprovalService $approvalService
+    ) {}
+
+    protected function getApprovalService(): ApprovalService
     {
-        try {
-            $featureRequest = $this->service->processFeatureRequest($id, $request->validated());
+        return $this->approvalService;
+    }
 
-            return ApiResponse::success(
-                new ApprovalResource($featureRequest),
-                $featureRequest->status === 'approved' ?
-                'Feature Request successfully approved' :
-                'Feature Request successfully rejected'
-            ); 
+    public function approveTicket(Ticket $ticket): JsonResponse
+    {
+        return $this->approve($ticket);
+    }
 
-        } catch (AlreadyProcessedException $e) {
-            return ApiResponse::error(
-                $e->getMessage(),
-                409
-            );
+    public function rejectTicket(RejectRequest $request, Ticket $ticket): JsonResponse
+    {
+        return $this->reject($request, $ticket);
+    }
 
-        } catch (\Exception $e) {
-            Log::error('Approval Feature Request failed', [
-                'feature_request_id' => $id,
-                'user_id' => Auth::id(),
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ]);
+    public function approveFeatureRequest(FeatureRequest $feature): JsonResponse
+    {
+        return $this->approve($feature);
+    }
 
-            return ApiResponse::error('Something went wrong.', 500);
-        }
+    public function rejectFeatureRequest(RejectRequest $request, FeatureRequest $feature): JsonResponse
+    {
+        return $this->reject($request, $feature);
+    }
+
+    public function approveErrorReport(ErrorReport $error): JsonResponse
+    {
+        return $this->approve($error);
+    }
+
+    public function rejectErrorReport(RejectRequest $request, ErrorReport $error): JsonResponse
+    {
+        return $this->reject($request, $error);
     }
 }
