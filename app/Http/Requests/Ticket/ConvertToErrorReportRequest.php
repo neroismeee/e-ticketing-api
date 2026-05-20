@@ -7,8 +7,6 @@ use App\Enums\Priorities;
 use App\Enums\TicketCategory;
 use App\Enums\TicketStatus;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\ErrorReport;
-use App\Models\Ticket;
 use Illuminate\Validation\Rule;
 
 class ConvertToErrorReportRequest extends FormRequest
@@ -23,10 +21,10 @@ class ConvertToErrorReportRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        $ticket = Ticket::find($this->route('ticket'));
+        $ticket = $this->route('ticket');
         
         $this->merge([
-            'status' => 'in_progress',
+            'status' => TicketStatus::PendingApproval,
             'progress' => 0,
             'reporter_id' => $ticket->reporter_id,
             'date_reported' =>$ticket->date_reported,

@@ -22,10 +22,10 @@ class ConvertToFeatureRequestRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        $ticket = Ticket::find($this->route('ticket'));
+        $ticket = $this->route('ticket');
     
         $this->merge([
-            'status' => 'pending_approval',
+            'status' => TicketStatus::PendingApproval,
             'progress' => 0,
             'reporter_id' => $ticket->reporter_id,
             'date_submitted' => $ticket->date_reported,

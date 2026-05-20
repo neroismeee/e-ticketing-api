@@ -2,6 +2,8 @@
 
 namespace App\Services\Ticket;
 
+use App\Enums\ConversionTypes;
+use App\Enums\TicketStatus;
 use App\Exceptions\ConversionFailedException;
 use App\Models\ErrorReport;
 use App\Models\Ticket;
@@ -63,8 +65,8 @@ class TicketConversionService
                 ]);
 
                 $ticket->update([
-                    'status' => 'converted',
-                    'converted_to_type' => 'error_report',
+                    'status' => TicketStatus::Converted,
+                    'converted_to_type' => ConversionTypes::ErrorReport,
                     'converted_to_id' => $errorReport->id,
                     'converted_at' => Carbon::now(),
                     'converted_by' => Auth::id(),
