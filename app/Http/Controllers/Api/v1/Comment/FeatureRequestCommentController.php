@@ -6,34 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Models\Comment;
 use App\Models\FeatureRequest;
-use App\Services\Comment\MentionService;
-use App\Traits\HandleComments;
+use App\Services\Comment\CommentService;
 
 class FeatureRequestCommentController extends Controller
 {
-    use HandleComments;
-
     public function __construct(
-        protected MentionService $mentionService
+        protected CommentService $commentService
     ) {}
-
-    protected function getMentionService(): MentionService
-    {
-        return $this->mentionService;
-    }
 
     public function index(FeatureRequest $feature)
     {
-        return $this->indexComment($feature);
+        return $this->commentService->indexComment($feature);
     }
 
     public function store(StoreCommentRequest $request, FeatureRequest $feature)
     {
-        return $this->storeComment($request, $feature);
+        return $this->commentService->storeComment($request, $feature);
     }
 
     public function destroy(FeatureRequest $feature, Comment $comment)
     {
-        return $this->destroyComment($feature, $comment);
+        return $this->commentService->destroyComment($feature, $comment);
     }
 }
