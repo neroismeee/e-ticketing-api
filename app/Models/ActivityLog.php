@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\ActivityAction;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Override;
 
 #[Fillable([
     'loggable_id',
@@ -38,6 +38,7 @@ class ActivityLog extends Model
     protected function casts(): array
     {
         return [
+            'action' => ActivityAction::class,
             'details' => 'array',
             'performed_at' => 'datetime'
         ];
