@@ -28,32 +28,26 @@ class TicketObserver
      */
     public function updated(Ticket $ticket): void
     {
-        $changes = array_keys($ticket->getChanges());
+        $changes = [];
 
-        if ($changes === ['status']) {
-            return;
-        }
+        foreach ($ticket->getChanges() as $field => $newValue) {
 
-        if (array_key_exists('assigned_to_id', $changes)) {
-            $ticket->loadMissing('assignee');
-
-            $this->logService->logAssigned(
-                loggable: $ticket,
-                assigneeName: $ticket->assignee?->name ?? 'Unknown'
-            );
-
-            if ($changes === ['assigned_to_id', 'updated_at']) {
-                return;
+            if (in_array($field, [
+                'updated_at',
+                'status',
+                'assigned_to_id'
+            ])) {
+                continue;
             }
+
+            $changes[$field] = [
+                'old' => $ticket->getOriginal($field),
+                'new' => $newValue,
+            ];
         }
 
-        $changedFields = array_diff(
-            $changes,
-            ['updated_at', 'status', 'assigned_to_id']
-        );
-
-        if (!empty($changedFields)) {
-            $this->logService->logUpdated($ticket, $changedFields);
+        if (!empty($changes)) {
+            $this->logService->logUpdated($ticket, $changes);
         }
     }
 
