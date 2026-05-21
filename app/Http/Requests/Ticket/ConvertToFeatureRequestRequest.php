@@ -7,7 +7,6 @@ use App\Enums\Priorities;
 use App\Enums\RequestType;
 use App\Enums\TicketStatus;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Ticket;
 use Illuminate\Validation\Rule;
 
 class ConvertToFeatureRequestRequest extends FormRequest
@@ -20,19 +19,6 @@ class ConvertToFeatureRequestRequest extends FormRequest
         return true;
     }
 
-    public function prepareForValidation()
-    {
-        $ticket = $this->route('ticket');
-    
-        $this->merge([
-            'status' => TicketStatus::PendingApproval,
-            'progress' => 0,
-            'reporter_id' => $ticket->reporter_id,
-            'date_submitted' => $ticket->date_reported,
-            'is_direct_input' => false
-        ]);
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -41,24 +27,16 @@ class ConvertToFeatureRequestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'request_type' => ['required', 'string', Rule::in(RequestType::values())],
-            'priority' => ['required', 'string', Rule::in(Priorities::values())],
-            'status' => ['required', 'string', Rule::in(TicketStatus::values())],
-            'progress' => 'required|integer|min:0|max:100',
-            'reporter_id' => 'required|integer|exists:users,id',
+            'priority' => ['nullable', 'string', Rule::in(Priorities::values())],
             'assigned_to_id' => 'nullable|integer|exists:users,id',
             'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
-            'assignment_date' => 'nullable|date',
             'start_date' => 'nullable|date',
             'due_date' => 'nullable|date',
             'review_date' => 'nullable|date',
             'estimated_effort' => 'nullable|numeric|decimal:0,2',
-            'roi_impact' => 'nullable|string',
-            'quality_impact' => 'nullable|string',
-            'source_ticket_id' => 'nullable|integer|exists:feature_requests,id',
-            'is_direct_input' => 'required|boolean',
             'conversion_reason' => 'required|string'
         ];
     }
