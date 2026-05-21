@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string|null $approval_status
+ * @property ApprovalStatus $approval_status
  */
 
 trait HasApproval
