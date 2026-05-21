@@ -35,7 +35,6 @@ enum TicketStatus: string
     public static function assignableStatuses(): array
     {
         return [
-            self::Draft,
             self::PendingApproval,
             self::Assigned,
             self::InProgress,
