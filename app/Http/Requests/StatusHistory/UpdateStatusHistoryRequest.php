@@ -45,28 +45,4 @@ class UpdateStatusHistoryRequest extends FormRequest
         ];
     }
 
-    // Helper
-    private function getAllowedStatus() : array 
-    {
-        return [
-            'draft',
-            'pending_approval',
-            'assigned',
-            'in_progress',
-            'waiting_for_user',
-            'approved',
-            'resolved',
-            'closed',
-            'converted',
-            'completed',
-            'overdue',
-            'submission',
-            'accepted',
-            'rejected',
-            'development',
-            'testing',
-            'validation',
-            'post_implementation_review'
-        ];    
-    }
 }

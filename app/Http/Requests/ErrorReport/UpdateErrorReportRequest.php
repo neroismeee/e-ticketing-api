@@ -3,11 +3,12 @@
 namespace App\Http\Requests\ErrorReport;
 
 use App\Enums\AssignedTeam;
+use App\Enums\ErrorCategory;
+use App\Enums\ErrorReportStatus;
 use App\Enums\Priorities;
-use App\Enums\TicketCategory;
-use App\Enums\TicketStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class UpdateErrorReportRequest extends FormRequest
 {
@@ -17,6 +18,15 @@ class UpdateErrorReportRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    public function prepareForValidation()
+    {
+        if ($this->filled('title')) {
+            $this->merge([
+                'title' => Str::title(trim($this->title))
+            ]);
+        }
     }
 
     /**
@@ -29,9 +39,9 @@ class UpdateErrorReportRequest extends FormRequest
         return [
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
-            'category' => ['sometimes', 'string', Rule::in(TicketCategory::values())],
+            'category' => ['sometimes', 'string', Rule::in(ErrorCategory::values())],
             'priority' => ['sometimes', 'string', Rule::in(Priorities::values())],
-            'status' => ['sometimes', 'string', Rule::in(TicketStatus::values())],
+            'status' => ['sometimes', 'string', Rule::in(ErrorReportStatus::values())],
             'reporter_id' => 'sometimes|integer|exists:users,id',
             'assigned_to_id' => 'nullable|integer|exists:users,id',
             'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],

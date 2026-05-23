@@ -23,9 +23,11 @@ class UpdateTicketRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        $this->merge([
-            'title' => Str::title(trim($this->title))
-        ]);
+        if ($this->filled('title')) {
+            $this->merge([
+                'title' => Str::title(trim($this->title))
+            ]);
+        }
     }
 
     /**

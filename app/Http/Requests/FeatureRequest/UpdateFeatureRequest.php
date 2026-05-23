@@ -3,11 +3,12 @@
 namespace App\Http\Requests\FeatureRequest;
 
 use App\Enums\AssignedTeam;
+use App\Enums\FeatureRequestStatus;
 use App\Enums\Priorities;
 use App\Enums\RequestType;
-use App\Enums\TicketStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class UpdateFeatureRequest extends FormRequest
 {
@@ -17,6 +18,15 @@ class UpdateFeatureRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    public function prepareForValidation()
+    {
+        if ($this->filled('title')) {
+            $this->merge([
+                'title' => Str::title(trim($this->title))
+            ]);
+        }
     }
 
     /**
@@ -31,7 +41,7 @@ class UpdateFeatureRequest extends FormRequest
             'description' => 'sometimes|string',
             'request_type' => ['sometimes', 'string', Rule::in(RequestType::values())],
             'priority' => ['sometimes', 'string', Rule::in(Priorities::values())],
-            'status' => ['sometimes', 'string', Rule::in(TicketStatus::values())],
+            'status' => ['sometimes', 'string', Rule::in(FeatureRequestStatus::values())],
             'progress' => 'sometimes|integer|min:0|max:100',
             'reporter_id' => 'sometimes|integer|exists:users,id',
             'assigned_to_id' => 'nullable|integer|exists:users,id',

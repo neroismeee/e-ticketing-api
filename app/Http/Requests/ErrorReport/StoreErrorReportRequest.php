@@ -5,11 +5,7 @@ namespace App\Http\Requests\ErrorReport;
 use App\Enums\AssignedTeam;
 use App\Enums\ErrorCategory;
 use App\Enums\Priorities;
-use App\Enums\TicketCategory;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\ErrorReport;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
