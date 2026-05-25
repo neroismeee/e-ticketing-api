@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\v1\Comment\TicketCommentController;
 use App\Http\Controllers\Api\v1\Comment\FeatureRequestCommentController;
 use App\Http\Controllers\Api\v1\Comment\ErrorReportCommentController;
 use App\Http\Controllers\Api\v1\DowntimeRecordController;
+use App\Http\Controllers\Api\v1\MilestoneController;
 use App\Http\Controllers\Api\v1\StatusHistory\ErrorReportStatusHistoryController;
 use App\Http\Controllers\Api\v1\StatusHistory\FeatureRequestStatusHistoryController;
 use App\Http\Controllers\Api\v1\StatusHistory\TicketStatusHistoryController;
@@ -66,6 +67,10 @@ Route::prefix('v1')->group(function () {
             //downtime record routes
             Route::get('downtime-records', [DowntimeRecordController::class, 'index']);
             Route::get('downtime-records/{downtimeRecord}', [DowntimeRecordController::class, 'show']);
+
+            //milestone routes
+            Route::get('feature-requests/{feature}/milestones', [MilestoneController::class, 'index']);
+            Route::get('feature-requests/{feature}/milestones/{milestone}', [MilestoneController::class, 'show']);
         });
 
         Route::middleware('role:it_staff')->group(function () {
@@ -118,6 +123,12 @@ Route::prefix('v1')->group(function () {
             Route::patch('downtime-records/{downtimeRecord}/resolve', [DowntimeRecordController::class, 'resolve']);
             Route::delete('downtime-records/{downtimeRecord}', [DowntimeRecordController::class, 'destroy']);
 
+            //milestone routes
+            Route::post('feature-requests/{feature}/milestones', [MilestoneController::class, 'store']);
+            Route::put('feature-requests/{feature}/milestones/{milestone}', [MilestoneController::class, 'update']);
+            Route::patch('feature-requests/{feature}/milestones/{milestone}/progress', [MilestoneController::class, 'updateProgress']);
+            Route::patch('feature-requests/{feature}/milestones/{milestone}/complete', [MilestoneController::class, 'complete']);
+            Route::delete('feature-requests/{feature}/milestones/{milestone}', [MilestoneController::class, 'destroy']);
         });
     });
 });
