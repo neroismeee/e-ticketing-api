@@ -33,7 +33,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
     'assigned_team',
     'date_submitted',
     'approval_date',
-    'assigned_date',
+    'assignment_date',
     'start_date',
     'due_date',
     'completion_date',
@@ -68,6 +68,7 @@ class FeatureRequest extends Model
         'request_type' => RequestType::class,
         'approval_status' => ApprovalStatus::class,
         'approval_date' => 'datetime',
+        'assignment_date' => 'datetime',
         'date_reported' => 'datetime'
     ];
 

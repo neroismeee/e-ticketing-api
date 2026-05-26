@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
     'reporter_id',
     'assigned_to_id',
     'assigned_team',
+    'assignment_date',
     'date_reported',
     'start_date',
     'due_date',
@@ -61,6 +62,7 @@ class ErrorReport extends Model
         'category' => ErrorCategory::class,
         'approval_status' => ApprovalStatus::class,
         'approval_date' => 'datetime',
+        'assignment_date' => 'datetime',
         'date_reported' => 'datetime'
     ];
 
