@@ -38,7 +38,7 @@ enum FeatureRequestStatus: string
         return array_column(self::cases(), 'value');
     }
 
-    public function assignableStatuses(): array
+    public static function assignableStatuses(): array
     {
         return [
             self::Submission->value,
