@@ -115,6 +115,21 @@ class FeatureRequest extends Model
             ->where('is_completed', false);
     }
 
+    public function timelineEntries(): HasMany
+    {
+        return $this->hasMany(TimelineEntry::class, 'feature_request_id')->orderBy('phase');
+    }
+
+    public function completedTimeline(): HasMany
+    {
+        return $this->hasMany(TimelineEntry::class, 'feature_request_id')->where('is_completed', true);
+    }
+
+    public function pendingTimeline(): HasMany
+    {
+        return $this->hasMany(TimelineEntry::class, 'feature_request_id')->where('is_completed', false);
+    }
+
     // Helpers
     public function calculateOverallProgress(): int
     {
@@ -125,5 +140,16 @@ class FeatureRequest extends Model
         }
 
         return (int) $milestones->avg('progress');
+    }
+    
+    public function calculateTimelineProgress(): int
+    {
+        $entries = $this->timelineEntries;
+
+        if ($entries->isEmpty()) {
+            return 0;
+        }
+
+        return (int) $entries->avg('progress');
     }
 }
