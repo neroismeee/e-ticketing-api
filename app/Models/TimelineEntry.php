@@ -47,7 +47,7 @@ class TimelineEntry extends Model
     // Helpers
     public function isCompleted(): bool
     {
-        return $this->is_completed === TimelinePhase::Completion->value;
+        return $this->is_completed === true;
     }
 
     public function isOverdue(): bool

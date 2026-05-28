@@ -145,8 +145,8 @@ Route::prefix('v1')->group(function () {
             //timeline routes
             Route::post('feature-requests/{feature}/timelines', [TimelineEntryController::class, 'store']);
             Route::put('feature-requests/{feature}/timelines/{entry}', [TimelineEntryController::class, 'update']);
-            Route::patch('feature-requests/{feature}/timelines/{entry}', [TimelineEntryController::class, 'updateProgress']);
-            Route::patch('feature-requests/{feature}/timelines/{entry}', [TimelineEntryController::class, 'complete']);
+            Route::patch('feature-requests/{feature}/timelines/{entry}/progress', [TimelineEntryController::class, 'updateProgress']);
+            Route::patch('feature-requests/{feature}/timelines/{entry}/complete', [TimelineEntryController::class, 'complete']);
             Route::delete('feature-requests/{feature}/timelines/{entry}', [TimelineEntryController::class, 'destroy']);
         });
     });

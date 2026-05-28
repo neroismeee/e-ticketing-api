@@ -97,6 +97,7 @@ class TimelineEntryService
         }
 
         $entry->update([
+            'phase' => TimelinePhase::Completion->value,
             'is_completed' => true,
             'progress' => 100,
             'end_date' => $entry->end_date ?? now()
