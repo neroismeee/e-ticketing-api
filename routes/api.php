@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\v1\MilestoneController;
 use App\Http\Controllers\Api\v1\StatusHistory\ErrorReportStatusHistoryController;
 use App\Http\Controllers\Api\v1\StatusHistory\FeatureRequestStatusHistoryController;
 use App\Http\Controllers\Api\v1\StatusHistory\TicketStatusHistoryController;
+use App\Http\Controllers\Api\v1\TagController;
 use App\Http\Controllers\Api\v1\TimelineEntryController;
 
 Route::prefix('v1')->group(function () {
@@ -77,6 +78,10 @@ Route::prefix('v1')->group(function () {
             //timeline routes
             Route::get('feature-requests/{feature}/timelines', [TimelineEntryController::class, 'index']);
             Route::get('feature-requests/{feature}/timelines/{entry}', [TimelineEntryController::class, 'show']);
+
+            //tag routes
+            Route::get('tags', [TagController::class, 'index']);
+            Route::get('tags/{tag}', [TagController::class, 'show']);
         });
 
         Route::middleware('role:it_staff')->group(function () {
@@ -148,6 +153,14 @@ Route::prefix('v1')->group(function () {
             Route::patch('feature-requests/{feature}/timelines/{entry}/progress', [TimelineEntryController::class, 'updateProgress']);
             Route::patch('feature-requests/{feature}/timelines/{entry}/complete', [TimelineEntryController::class, 'complete']);
             Route::delete('feature-requests/{feature}/timelines/{entry}', [TimelineEntryController::class, 'destroy']);
+
+            //tag routes
+            Route::post('tags', [TagController::class, 'store']);
+            Route::put('tags', [TagController::class, 'update']);
+            Route::delete('tags', [TagController::class, 'destroy']);
+            Route::post('{resourceType}/{resourceId}/tags/attach', [TagController::class, 'attach'])->where('resourceType', 'tickets|features|errors');
+            Route::post('{resourceType}/{resourceId}/tags/detach', [TagController::class, 'detach'])->where('resourceType', 'tickets|features|errors');
+            Route::put('{resourceType}/{resourceId}/tags/sync', [TagController::class, 'sync'])->where('resourceType', 'tickets|features|errors');
         });
     });
 });
