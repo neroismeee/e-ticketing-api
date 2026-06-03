@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Comment;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Comment\CommentResource;
@@ -10,21 +11,19 @@ use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Helpers\ApiResponse;
+use App\Models\Ticket;
 use App\Models\User;
 use App\Services\Log\ActivityLogService;
+use App\Services\NotificationService;
 use Illuminate\Support\Str;
 
 class CommentService
 {
     public function __construct(
-        protected MentionService $mentionService,
-        private readonly ActivityLogService $logService
+        private readonly MentionService $mentionService,
+        private readonly ActivityLogService $logService,
+        private readonly NotificationService $notificationService
     ) {}
-
-    protected function getMentionService()
-    {
-        return $this->mentionService;
-    }
 
     public function indexComment(Model $parent)
     {
@@ -47,22 +46,20 @@ class CommentService
 
     public function storeComment(StoreCommentRequest $request, Model $parent)
     {
-        $mentionService = $this->getMentionService(); 
-
-        $mentionedUser = $mentionService->resolve(
+        $mentionedUsers = $this->mentionService->resolve(
             content: $request->validated('content'),
             authorId: Auth::id()
         );
 
         $comment = DB::transaction(
-            function () use ($request, $parent, $mentionService, $mentionedUser) {
+            function () use ($request, $parent, $mentionedUsers) {
                 $comment = $parent->comments()->create([
                     ...$request->validated(),
                     'user_id' => Auth::id(),
                     'is_internal' => $this->resolveIsInternal($request)
                 ]);
 
-                $mentionService->persist($comment->id, $mentionedUser);
+                $this->mentionService->persist($comment->id, $mentionedUsers);
 
                 return $comment;
             }
@@ -75,7 +72,7 @@ class CommentService
         );
 
         //* log mentioned
-        foreach ($mentionedUser as $mentionedUser) {
+        foreach ($mentionedUsers as $mentionedUser) {
             $this->logService->logMentioned(
                 loggable: $parent,
                 targetUserId: $mentionedUser->id,
@@ -83,10 +80,22 @@ class CommentService
             );
         }
 
+        //* mention notification
+        if ($parent instanceof Ticket && $mentionedUsers->isNotEmpty()) {
+            $mentionerName = Auth::user()?->name ?? 'Someone';
+
+            foreach ($mentionedUsers as $mentionedUser) {
+                $this->notificationService->notifyCommentMention(
+                    userId: $mentionedUser->id,
+                    ticket: $parent,
+                    mentionedBy: $mentionerName
+                );
+            }
+        }
+
         return new CommentResource(
             $comment->load(['user', 'mentions.mentionedUser'])
         );
-
     }
 
     public function destroyComment(Model $parent, Comment $comment): JsonResponse
@@ -110,8 +119,8 @@ class CommentService
     {
         $user = $request->user();
 
-        if ($user && $user->isItStaff()) {
-            return true;
+        if (! $user?->isItStaff()) {
+            return false;
         }
 
         return $request->boolean('is_internal');
