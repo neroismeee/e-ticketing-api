@@ -3,7 +3,10 @@
 namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\User;
+use Illuminate\Validation\Rule;
+use App\Enums\UserRole;
+use App\Enums\AssignedTeam;
+use App\Enums\DigestFreq;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -24,16 +27,17 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|max:255',
+            'username' => 'required|string|max:255',
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $this->user,
             'password' => 'sometimes|string|min:8|confirmed',
-            'role' => 'sometimes|string|in:' . implode(',', User::ROLES),      
-            'team' => 'nullable|string|max:255|in:' . implode(',', User::TEAMS),
+            'role' => ['sometimes', 'string', Rule::in(UserRole::values())],      
+            'team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
             'avatar' => 'nullable|url',
             'is_active' => 'boolean|default:1',
             'pref_email_notifications' => 'nullable|boolean',
             'pref_sla_alerts' => 'nullable|boolean',
             'pref_downtime_alerts' => 'nullable|boolean',
-            'pref_digest_frequency' => 'nullable|string|in:' . implode(',', User::PREF_DIGEST_FREQUENCIES),
+            'pref_digest_frequency' => ['nullable', 'string', Rule::in(DigestFreq::values())],
             'pref_quiet_hours' => 'nullable|string|regex:/^\d{2}:\d{2}-\d{2}:\d{2}$/'
         ];
     }
