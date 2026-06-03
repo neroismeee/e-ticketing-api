@@ -15,6 +15,7 @@ use App\Models\ErrorReport;
 use App\Models\FeatureRequest;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 use BackedEnum;
@@ -22,7 +23,8 @@ use BackedEnum;
 class AssignmentService
 {
     public function __construct(
-        private readonly ActivityLogService $logService
+        private readonly ActivityLogService $logService,
+        private readonly NotificationService $notificationService
     ) {}
 
     public function assignToUser(Model $resource, int $userId): Model
@@ -73,6 +75,14 @@ class AssignmentService
                     loggable: $resource,
                     previousStatus: $previousStatus,
                     newStatus: $resource->status->value
+                );
+            }
+
+            // notification
+            if ($resource instanceof Ticket) {
+                $this->notificationService->notifyTicketAssigned(
+                    userId: $user->id,
+                    ticket: $resource
                 );
             }
         });
@@ -137,6 +147,11 @@ class AssignmentService
                     previousStatus: $previousStatus,
                     newStatus: $resource->status->value
                 );
+            }
+
+            // notification
+            if ($resource instanceof Ticket) {
+                $this->notifyTeamMember($resource, $assignedTeam->value);
             }
         });
 
@@ -214,7 +229,7 @@ class AssignmentService
 
         $allowedStatuses = $this->resolveAssignableStatus($resource);
 
-        if (! in_array($currentStatus, $allowedStatuses)) {
+        if (in_array($currentStatus, $allowedStatuses)) {
             throw ValidationException::withMessages([
                 'status' => [
                     "Resource with status '{$currentStatus}' cannot be assigned."
@@ -261,5 +276,19 @@ class AssignmentService
             $resource instanceof ErrorReport => FeatureRequestStatus::Assigned->value,
             default => 'assigned',
         };
+    }
+
+    private function notifyTeamMember(Ticket $ticket, string $team): void
+    {
+        $teamMembers = User::where('role', 'it_staff')
+        ->where('is_active', true)
+        ->get();
+
+        foreach ($teamMembers as $member) {
+            $this->notificationService->notifyTicketAssigned(
+                userId: $member->id,
+                ticket: $ticket
+            );
+        }
     }
 }
