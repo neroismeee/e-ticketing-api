@@ -21,7 +21,7 @@ use Psy\Util\Json;
 class TagController extends Controller
 {
     public function __construct(
-        protected readonly TagService $service
+        private readonly TagService $service
     ) {}
 
     public function index(Request $request): JsonResponse

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class NotificationController extends Controller
 {
     public function __construct(
-        protected readonly NotificationService $service
+        private readonly NotificationService $service
     ) {}
 
     public function index(Request $request): JsonResponse

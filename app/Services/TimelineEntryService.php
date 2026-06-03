@@ -16,7 +16,7 @@ use Ramsey\Uuid\Type\Time;
 class TimelineEntryService
 {
     public function __construct(
-        protected readonly ActivityLogService $logService
+        private readonly ActivityLogService $logService
     ) {}
 
     public function store(FeatureRequest $feature, array $data): TimelineEntry

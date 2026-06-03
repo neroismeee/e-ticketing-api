@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 class TimelineEntryController extends Controller
 {
     public function __construct(
-        protected readonly TimelineEntryService $service
+        private readonly TimelineEntryService $service
     ) {}
 
     public function index(Request $request, FeatureRequest $feature): JsonResponse
