@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
-
 class MentionService
 {
     private const max_mentions_per_comment = 10;
