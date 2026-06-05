@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\v1\StatusHistory\ErrorReportStatusHistoryController
 use App\Http\Controllers\Api\v1\StatusHistory\FeatureRequestStatusHistoryController;
 use App\Http\Controllers\Api\v1\StatusHistory\TicketStatusHistoryController;
 use App\Http\Controllers\Api\v1\TagController;
+use App\Http\Controllers\Api\v1\Ticket\MergedTicketController;
 use App\Http\Controllers\Api\v1\TicketWatcherController;
 use App\Http\Controllers\Api\v1\TimelineEntryController;
 
@@ -103,10 +104,13 @@ Route::prefix('v1')->group(function () {
             Route::post('/tickets/{ticket}/watch', [TicketWatcherController::class, 'watch']);
             Route::delete('/tickets/{ticket}/watch', [TicketWatcherController::class, 'unwatch']);
 
-            // conversion history routes
+            //conversion history routes
             Route::get('/conversion-history', [ConversionHistoryController::class, 'index']);
             Route::get('/conversion-history/{history}', [ConversionHistoryController::class, 'show']);
             Route::get('/tickets/{ticket}/conversion-history', [ConversionHistoryController::class, 'byTicket']);
+
+            //merge ticket routes
+            Route::get('/tickets/{ticket}/merge', [MergedTicketController::class, 'index']);
         });
 
         Route::middleware('role:it_staff')->group(function () {
@@ -190,6 +194,10 @@ Route::prefix('v1')->group(function () {
             //ticket watcher routes
             Route::post('tickets/{ticket}/watchers', [TicketWatcherController::class, 'addWatcher']);
             Route::delete('tickets/{ticket}/watchers/{userId}', [TicketWatcherController::class, 'removeWatcher']);
+
+            //merge ticket routes
+            Route::post('/tickets/{ticket}/merge', [MergedTicketController::class, 'mergeTicket']);
+            Route::delete('tickets/{ticket}/merge/{mergedTicketId}', [MergedTicketController::class, 'unmergeTicket']);
         });
     });
 });
