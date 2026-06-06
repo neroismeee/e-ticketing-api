@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class MergedTicket extends Pivot
 {
-    public $table = 'merged_tickets';
+    protected $table = 'merged_tickets';
     public $casts = [
         'merged_at' => 'datetime'
     ];
