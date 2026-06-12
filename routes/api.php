@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\v1\ActivityLogController;
 use App\Http\Controllers\Api\v1\ApprovalController;
+use App\Http\Controllers\Api\v1\Assignment\ErrorReportAssignmentController;
 use App\Http\Controllers\Api\v1\Assignment\FeatureRequestAssignmentController;
 use App\Http\Controllers\Api\v1\Assignment\TicketAssignmentController;
 use App\Http\Controllers\Api\v1\Attachment\CommentAttachmentController;
@@ -139,17 +140,25 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::middleware('role:team_lead')->group(function () {
-            //ticket assignment routes
-            Route::post('/tickets/{ticket}/assign/user', [TicketAssignmentController::class, 'assignUser']);
-            Route::post('/tickets/{ticket}/assign/team', [TicketAssignmentController::class, 'assignTeam']);
-            Route::post('/tickets/{ticket}/unassign/user', [TicketAssignmentController::class, 'unassignUser']);
-            Route::post('/tickets/{ticket}/unassign/team', [TicketAssignmentController::class, 'unassignTeam']);
+            //approval routes
+            Route::post('/tickets/{ticket}/approve', [ApprovalController::class, 'approveTicket'])->name('tickets.approve');
+            Route::post('/tickets/{ticket}/reject', [ApprovalController::class, 'rejectTicket'])->name('tickets.reject');
+            Route::post('/features/{feature}/approve', [ApprovalController::class, 'approveFeatureRequest'])->name('feature-request.approve');
+            Route::post('/features/{feature}/reject', [ApprovalController::class, 'rejectFeatureRequest'])->name('feature-requests.reject');
+            Route::post('/errors/{error}/approve', [ApprovalController::class, 'approveErrorReport'])->name('error-reports.approve');
+            Route::post('/errors/{error}/reject', [ApprovalController::class, 'rejectErrorReport'])->name('error-reports.reject');
             
             //feature request assignment routes
             Route::post('/features/{feature}/assign/user', [FeatureRequestAssignmentController::class, 'assignUser']);
             Route::post('/features/{feature}/assign/team', [FeatureRequestAssignmentController::class, 'assignTeam']);
             Route::post('/features/{feature}/unassign/user', [FeatureRequestAssignmentController::class, 'unassignUser']);
             Route::post('/features/{feature}/unassign/team', [FeatureRequestAssignmentController::class, 'unassignTeam']);
+
+            //error report assignment routes
+            Route::post('/errors/{error}/assign/user', [ErrorReportAssignmentController::class, 'assignUser']);
+            Route::post('/errors/{error}/assign/team', [ErrorReportAssignmentController::class, 'assignTeam']);
+            Route::post('/errors/{error}/unassign/user', [ErrorReportAssignmentController::class, 'unassignUser']);
+            Route::post('/errors/{error}/unassign/team', [ErrorReportAssignmentController::class, 'unassignTeam']);
         });
 
         Route::middleware('role:it_staff')->group(function () {
@@ -170,14 +179,6 @@ Route::prefix('v1')->group(function () {
             Route::post('/feature-requests', [FeatureController::class, 'store'])->name('feature-requests.store');
             Route::put('/feature-requests/{feature}', [FeatureController::class, 'update'])->name('feature-requests.update');
             Route::delete('/feature-requests/{feature}', [FeatureController::class, 'destroy'])->name('feature-requests.delete');
-
-            //approval routes
-            Route::post('/tickets/{ticket}/approve', [ApprovalController::class, 'approveTicket'])->name('tickets.approve');
-            Route::post('/tickets/{ticket}/reject', [ApprovalController::class, 'rejectTicket'])->name('tickets.reject');
-            Route::post('/features/{feature}/approve', [ApprovalController::class, 'approveFeatureRequest'])->name('feature-request.approve');
-            Route::post('/features/{feature}/reject', [ApprovalController::class, 'rejectFeatureRequest'])->name('feature-requests.reject');
-            Route::post('/errors/{error}/approve', [ApprovalController::class, 'approveErrorReport'])->name('error-reports.approve');
-            Route::post('/errors/{error}/reject', [ApprovalController::class, 'rejectErrorReport'])->name('error-reports.reject');
 
             //status history routes
             Route::patch('/tickets/{ticket}/status', [TicketStatusHistoryController::class, 'update']);
