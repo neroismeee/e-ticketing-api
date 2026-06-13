@@ -16,9 +16,10 @@ use App\Models\FeatureRequest;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Services\NotificationService;
-use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 use BackedEnum;
+use App\Enums\Priorities;
+use Illuminate\Support\Carbon;
 
 class AssignmentService
 {
@@ -49,14 +50,16 @@ class AssignmentService
         DB::transaction(function () use ($resource, $user, $previousAssignee, $previousStatus) {
             $resource->update([
                 'assigned_to_id' => $user->id,
-                'assignment_date' => Carbon::now(),
+                'assignment_date' => now(),
                 'status' => $this->resolveStatusAfterAssignment($resource),
+                'due_date' => $this->calculateDueDate($resource->priority->value, now()),
             ]);
 
             $description = $previousAssignee
                 ? "Reassign from '{$previousAssignee}' to '{$user->name}'."
                 : "Assign to '{$user->name}'.";
 
+            // log assignment 
             $this->logService->log(
                 loggable: $resource,
                 action: ActivityAction::Assigned,
@@ -65,7 +68,7 @@ class AssignmentService
                 details: array_filter([
                     'assign_to' => $user->name,
                     'previous_assignee' => $previousAssignee,
-                    'assignment_date' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'assignment_date' => now()->format('Y-m-d H:i:s'),
                 ])
             );
 
@@ -120,14 +123,16 @@ class AssignmentService
         DB::transaction(function () use ($resource, $assignedTeam, $previousTeamLabel, $previousStatus) {
             $resource->update([
                 'assigned_team' => $assignedTeam->value,
-                'assignment_date' => Carbon::now(),
-                'status' => $this->resolveStatusAfterAssignment($resource)
+                'assignment_date' => now(),
+                'status' => $this->resolveStatusAfterAssignment($resource),
+                'due_date' => $this->calculateDueDate($resource->priority->value, now()),
             ]);
 
             $description = $previousTeamLabel
                 ? "Reassign from '{$previousTeamLabel}' to '{$assignedTeam->label()}'."
                 : "Assigned to team '{$assignedTeam->value}'.";
 
+            // log assignment
             $this->logService->log(
                 loggable: $resource,
                 action: ActivityAction::Assigned,
@@ -136,7 +141,7 @@ class AssignmentService
                 details: array_filter([
                     'assigned_team' => $assignedTeam->value,
                     'previous_team' => $previousTeamLabel,
-                    'assignment_date' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'assignment_date' => now()->format('Y-m-d H:i:s'),
                 ])
             );
 
@@ -221,7 +226,6 @@ class AssignmentService
         return $resource->load('assignedUser');
     }
 
-
     // Private
     private function guardNotAssignable(Model $resource): void
     {
@@ -290,5 +294,13 @@ class AssignmentService
                 ticket: $ticket
             );
         }
+    }
+
+    private function calculateDueDate(string $priority, Carbon $assignmentDate): Carbon
+    {
+        $priorityEnum = Priorities::tryFrom($priority);
+        $hours = $priorityEnum ? $priorityEnum->slaHours() : 48;
+
+        return $assignmentDate->copy()->addHours($hours);
     }
 }

@@ -1,10 +1,9 @@
 <?php
 
+use App\Enums\FeatureRequestStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
-use function Symfony\Component\Clock\now;
 
 return new class extends Migration
 {
@@ -15,11 +14,11 @@ return new class extends Migration
     {
         Schema::create('feature_requests', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->string('title');
+            $table->string('title', 200);
             $table->text('description');
-            $table->string('request_type');
-            $table->string('priority');
-            $table->string('status');
+            $table->string('request_type', 50);
+            $table->string('priority', 50);
+            $table->string('status', 50)->default(FeatureRequestStatus::PendingApproval->value);
             $table->integer('progress')->default(0);
             $table->foreignId('reporter_id')
                   ->constrained('users')
@@ -30,7 +29,7 @@ return new class extends Migration
                   ->constrained('users')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
-            $table->string('assigned_team')->nullable();
+            $table->string('assigned_team', 50)->nullable();
             $table->timestamp('date_submitted')->useCurrent();
             $table->timestamp('approval_date')->nullable();
             $table->timestamp('assignment_date')->nullable();
@@ -60,6 +59,16 @@ return new class extends Migration
                   ->onDelete('cascade');
             $table->boolean('is_direct_input')->default(false);
             $table->timestamps();
+
+            // Index
+            $table->index('request_type');
+            $table->index('priority');
+            $table->index('status');
+            $table->index('reporter_id');
+            $table->index('assigned_to_id');
+            $table->index('sla_breached');
+            $table->index('source_ticket_id');
+            $table->index('is_direct_input');
         });
     }
 

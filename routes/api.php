@@ -12,7 +12,6 @@ use App\Http\Controllers\Api\v1\CalendarEventController;
 use App\Http\Controllers\Api\v1\Comment\MentionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\v1\ErrorController;
 use App\Http\Controllers\Api\v1\TicketController;
 use App\Http\Controllers\Api\v1\FeatureController;
 use App\Http\Controllers\Api\v1\TIcketConversionController;
@@ -22,6 +21,7 @@ use App\Http\Controllers\Api\v1\Comment\ErrorReportCommentController;
 use App\Http\Controllers\Api\v1\ConversionHistoryController;
 use App\Http\Controllers\Api\v1\DowntimeAffectedSystemController;
 use App\Http\Controllers\Api\v1\DowntimeRecordController;
+use App\Http\Controllers\Api\v1\ErrorReportController;
 use App\Http\Controllers\Api\v1\MilestoneController;
 use App\Http\Controllers\Api\v1\NotificationController;
 use App\Http\Controllers\Api\v1\StatusHistory\ErrorReportStatusHistoryController;
@@ -54,8 +54,8 @@ Route::prefix('v1')->group(function () {
             Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
 
             //error report routes
-            Route::get('/error-reports', [ErrorController::class, 'index'])->name('error-reports.index');
-            Route::get('/error-reports/{error}', [ErrorController::class, 'show'])->name('error-reports.show');
+            Route::get('/error-reports', [ErrorReportController::class, 'index'])->name('error-reports.index');
+            Route::get('/error-reports/{error}', [ErrorReportController::class, 'show'])->name('error-reports.show');
 
             //feature request routes
             Route::get('/feature-requests', [FeatureController::class, 'index'])->name('feature-requests.index');
@@ -170,9 +170,9 @@ Route::prefix('v1')->group(function () {
                 ->name('tickets.convert.feature-request');
 
             //error report routes
-            Route::post('/error-reports', [ErrorController::class, 'store'])->name('error-reports.store');
-            Route::put('/error-reports/{error}', [ErrorController::class, 'update'])->name('error-reports.update');
-            Route::delete('/error-reports/{error}', [ErrorController::class, 'destroy'])->name('error-reports.delete');
+            Route::post('/error-reports', [ErrorReportController::class, 'store'])->name('error-reports.store');
+            Route::put('/error-reports/{error}', [ErrorReportController::class, 'update'])->name('error-reports.update');
+            Route::delete('/error-reports/{error}', [ErrorReportController::class, 'destroy'])->name('error-reports.delete');
 
             //feature request routes
             Route::post('/feature-requests', [FeatureController::class, 'store'])->name('feature-requests.store');

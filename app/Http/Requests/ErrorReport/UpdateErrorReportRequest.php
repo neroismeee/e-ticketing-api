@@ -37,25 +37,14 @@ class UpdateErrorReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
+            'title' => ['sometimes', 'string', 'max:255'],
+            'description' => ['sometimes', 'string'],
             'category' => ['sometimes', 'string', Rule::in(ErrorCategory::values())],
             'priority' => ['sometimes', 'string', Rule::in(Priorities::values())],
-            'status' => ['sometimes', 'string', Rule::in(ErrorReportStatus::values())],
-            'reporter_id' => 'sometimes|integer|exists:users,id',
-            'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
-            'date_reported' => 'sometimes|date',
-            'start_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-            'completion_date' => 'nullable|date',
-            'estimated_effort' => 'nullable|numeric|decimal:0,2',
-            'actual_effort' => 'nullable|numeric|decimal:0,2',
-            'sla_time_elapsed' => 'nullable|numeric|decimal:0,2',
-            'sla_time_remaining' => 'nullable|numeric|decimal:0,2',
-            'sla_breached' => 'sometimes|boolean',
-            'source_ticket_id' => 'nullable|integer|exists:error_reports,id',
-            'is_direct_input' => 'sometimes|boolean',
+            'start_date' => ['nullable', 'date'],
+            'due_date' => ['nullable', 'date', 'after:now'],
+            'estimated_effort' => ['nullable', 'numeric', 'min:0'],
+            'actual_effort' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 }

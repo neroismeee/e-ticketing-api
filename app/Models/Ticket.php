@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use tidy;
 
 #[Fillable([
     'id',
@@ -54,10 +53,6 @@ use tidy;
     'converted_at',
     'converted_by',
     'conversion_reason',
-    'approval_status',
-    'approved_by',
-    'approval_date',
-    'rejection_reason'
 ])]
 
 #[ObservedBy([TicketObserver::class])]
@@ -75,8 +70,6 @@ class Ticket extends Model
         'priority' => Priorities::class,
         'category' => TicketCategory::class,
         'converted_to_type' => ConversionTypes::class,
-        'approval_status' => ApprovalStatus::class,
-        'approval_date' => 'datetime',
         'assignment_date' => 'datetime',
         'date_reported' => 'datetime',
         'due_date' => 'datetime',

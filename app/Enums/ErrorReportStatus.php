@@ -33,12 +33,4 @@ enum ErrorReportStatus: string
             self::InProgress,
         ];
     }
-
-    public function isFinal(): bool
-    {
-        return in_array($this, [
-            self::Completed,
-            self::Overdue
-        ], true);
-    }
 }

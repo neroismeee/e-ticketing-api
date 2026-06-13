@@ -8,8 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Ticket\StoreTicketRequest;
 use App\Http\Requests\Ticket\UpdateTicketRequest;
 use App\Models\Ticket;
-use App\Http\Resources\TicketDetailResource;
-use App\Http\Resources\TicketResource;
+use App\Http\Resources\Ticket\TicketResource;
+use App\Http\Resources\Ticket\TicketResourceDetail;
 use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -56,7 +56,7 @@ class TicketController extends Controller
         $ticket = $this->service->store($request->validated());
 
         return ApiResponse::success(
-            new TicketDetailResource($ticket),
+            new TicketResourceDetail($ticket),
             'Ticket created successfully.',
             201
         );
@@ -74,7 +74,7 @@ class TicketController extends Controller
         }
 
         return ApiResponse::success(
-            new TicketDetailResource($ticket->load(['reporter', 'assignedUser', 'tags'])),
+            new TicketResourceDetail($ticket->load(['reporter', 'assignedUser', 'tags'])),
             'Ticket retrieved successfully'
         );
     }
@@ -87,7 +87,7 @@ class TicketController extends Controller
         $updated = $this->service->update($ticket, $request->validated());
 
         return ApiResponse::success(
-            new TicketDetailResource($updated),
+            new TicketResourceDetail($updated),
             'Ticket updated successfully'
         );
     }

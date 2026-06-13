@@ -19,12 +19,13 @@ class StoreErrorReportRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation()
+    public function prepareForValidation()
     {
-        $this->merge([
-            'title' => Str::title(trim($this->title)),
-            'is_direct_input' => !$this->has('source_ticket_id') || is_null($this->source_ticket_id)
-        ]);
+        if ($this->filled('title')) {
+            $this->merge([
+                'title' => Str::title(trim($this->title))
+            ]);
+        }
     }
 
     /**
@@ -35,17 +36,13 @@ class StoreErrorReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
             'category' => ['required', 'string', Rule::in(ErrorCategory::values())],
             'priority' => ['required', 'string', Rule::in(Priorities::values())],
-            'assigned_to_id' => 'nullable|integer|exists:users,id',
-            'assigned_team' => ['nullable', 'string', 'max:255', Rule::in(AssignedTeam::values())],
-            'start_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-            'estimated_effort' => 'nullable|numeric|decimal:0,2',
-            'source_ticket_id' => 'nullable|integer|exists:error_reports,id',
-            'is_direct_input' => 'required|boolean',
+            'start_date' => ['nullable', 'date'],
+            'due_date' => ['nullable', 'date', 'after:now'],
+            'estimated_effort' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 }

@@ -6,7 +6,6 @@ use App\Enums\Priorities;
 use App\Enums\TicketStatus;
 use App\Enums\UserRole;
 use App\Models\Ticket;
-use App\Services\Log\ActivityLogService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -14,10 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class TicketService
 {
-    public function __construct(
-        private readonly ActivityLogService $service
-    ) {}
-
     public function store(array $data): Ticket
     {
         $ticket = DB::transaction(function () use ($data) {
@@ -39,15 +34,7 @@ class TicketService
 
     public function update(Ticket $ticket, array $data): Ticket
     {
-        $changedFields = array_keys(
-            array_diff_key($data, array_flip(['status', 'assigned_to_id', 'assigned_team']))
-        );
-
         $ticket->update($data);
-
-        if (! empty($changedFields)) {
-            $this->service->logUpdated($ticket, $changedFields);
-        }
 
         return $ticket->load(['reporter', 'assignedUser', 'tags']);
     }
